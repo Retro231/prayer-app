@@ -6,7 +6,11 @@ export default function DrawerLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <Drawer>
+        <Drawer
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
           <Drawer.Screen
             name="(tabs)" // This is the name of the page and must match the url from root
             options={{
