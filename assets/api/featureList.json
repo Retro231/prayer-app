@@ -1,0 +1,52 @@
+{
+  "data": [
+    {
+      "id": 0,
+      "name": "Prayer Timer",
+      "icon": "clock",
+      "url": ""
+    },
+    {
+      "id": 1,
+      "name": "Al Quran",
+      "icon": "book-open",
+      "url": ""
+    },
+    {
+      "id": 2,
+      "name": "Prayer Learning",
+      "icon": "pray",
+      "url": ""
+    },
+    {
+      "id": 3,
+      "name": "Live Makkah Madina",
+      "icon": "kaaba",
+      "url": ""
+    },
+    {
+      "id": 4,
+      "name": "Compass",
+      "icon": "compass",
+      "url": ""
+    },
+    {
+      "id": 5,
+      "name": "Islamic TV Channels",
+      "icon": "tv",
+      "url": ""
+    },
+    {
+      "id": 6,
+      "name": "Islamic TV Channels",
+      "icon": "tv",
+      "url": ""
+    },
+    {
+      "id": 7,
+      "name": "Islamic TV Channels",
+      "icon": "tv",
+      "url": ""
+    }
+  ]
+}

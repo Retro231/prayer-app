@@ -2,20 +2,15 @@ import { Dimensions, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
+import { DrawerToggleButton } from "@react-navigation/drawer";
 const { width, height } = Dimensions.get("screen");
 
 const Header = () => {
-  const toggleDrawer = () => {};
   return (
     <View style={styles.wrapper}>
       {/* left section */}
       <View style={styles.left}>
-        <Ionicons
-          name={"menu"}
-          size={32}
-          color={Colors.text2}
-          onPress={toggleDrawer}
-        />
+        <DrawerToggleButton tintColor={Colors.text2} />
         <Text style={styles.title}>Page Title</Text>
       </View>
       {/* right section*/}
@@ -39,7 +34,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
+    paddingRight: 10,
     paddingVertical: 16,
     backgroundColor: Colors.lightSea,
     maxWidth: "auto",
@@ -47,7 +43,6 @@ const styles = StyleSheet.create({
   left: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 16,
   },
   title: {
     fontSize: 16,

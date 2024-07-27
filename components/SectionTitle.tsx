@@ -9,7 +9,11 @@ interface PropsType {
 
 const SectionTitle: React.FC<PropsType> = ({ title, style }) => {
   return (
-    <View>
+    <View
+      style={{
+        marginBottom: 5,
+      }}
+    >
       <Text
         style={[
           {
@@ -17,6 +21,7 @@ const SectionTitle: React.FC<PropsType> = ({ title, style }) => {
             fontWeight: "bold",
             color: Colors.lightSea,
             fontSize: 18,
+            textTransform: "capitalize",
           },
           style,
         ]}

@@ -1,0 +1,67 @@
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import FontAwesome from "@expo/vector-icons/FontAwesome5";
+import { Colors } from "@/constants/Colors";
+
+interface propsType {
+  iconName: keyof typeof FontAwesome.glyphMap;
+  featureName: String;
+  empty: Boolean;
+}
+
+const FeatureNavBtn: React.FC<propsType> = ({
+  iconName,
+  featureName,
+  empty,
+}) => {
+  const handlePress = () => {
+    console.log("press");
+  };
+
+  if (empty) {
+    return <View style={[styles.wrapper, styles.buttonInvisible]} />;
+  }
+  return (
+    <TouchableOpacity
+      style={styles.wrapper}
+      activeOpacity={0.9}
+      onPress={handlePress}
+    >
+      <FontAwesome
+        name={iconName}
+        size={24}
+        style={[styles.text, { fontSize: 20 }]}
+      />
+      <Text style={styles.text}>{featureName}</Text>
+    </TouchableOpacity>
+  );
+};
+
+export default FeatureNavBtn;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    padding: 10,
+    borderRadius: 10,
+    borderColor: Colors.darkSea,
+    backgroundColor: Colors.lightSea,
+    width: "32%",
+    aspectRatio: 1, // Ensures square buttons
+    marginBottom: 5,
+  },
+  text: {
+    fontFamily: "MontserratBold",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: Colors.text2,
+    textAlign: "center",
+  },
+  buttonInvisible: {
+    backgroundColor: "transparent",
+    borderColor: "transparent",
+  },
+});

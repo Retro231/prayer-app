@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   circle: {
     borderWidth: 1.5,
     borderColor: "#fff",
-    padding: 10,
+    padding: 8,
     borderRadius: 50,
     alignItems: "center",
     backgroundColor: Colors.darkSea,
@@ -44,6 +44,6 @@ const styles = StyleSheet.create({
   prayerName: {
     fontWeight: "medium",
     fontFamily: "MontserratMedium",
-    fontSize: 14,
+    fontSize: 12,
   },
 });
