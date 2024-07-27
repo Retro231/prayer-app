@@ -13,7 +13,12 @@ export default function StackLayout() {
     //   },
     // }}
     >
-      <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="compass" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="live_makkah_madinah"
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="more" options={{ headerShown: false }} />
     </Stack>
   );

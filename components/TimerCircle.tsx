@@ -1,20 +1,31 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
 import React from "react";
 import { Colors } from "@/constants/Colors";
 
-const TimerCircle = ({ active = false }) => {
+interface propsType {
+  active: Boolean;
+  bgStyle?: ViewStyle | ViewStyle[];
+  textStyle?: TextStyle | TextStyle[];
+}
+
+const TimerCircle: React.FC<propsType> = ({
+  active = false,
+  bgStyle,
+  textStyle,
+}) => {
   return (
     <View style={styles.wrapper}>
       <View
         style={[
           styles.circle,
           active && { backgroundColor: "#1D3C43", borderColor: Colors.green },
+          bgStyle,
         ]}
       >
         <Text style={[styles.text]}>03.20</Text>
         <Text style={[styles.text]}>AM</Text>
       </View>
-      <Text style={[styles.text, styles.prayerName]}>Tahajjud</Text>
+      <Text style={[styles.text, styles.prayerName, textStyle]}>Tahajjud</Text>
     </View>
   );
 };

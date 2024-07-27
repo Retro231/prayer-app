@@ -43,7 +43,7 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    const features = require("../../../../assets/api/featureList.json");
+    const features = require("../../../../assets/data/featureList.json");
     // console.log(features);
     const data = padData([...features.data], 3);
     setFeatures(data);
@@ -51,7 +51,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Header />
+      <Header title={"Home"} />
       <VirtualizedList>
         {/* hero Wrapper */}
         <HeroWrapper style={styles.heroWrapper}>
@@ -86,7 +86,7 @@ export default function HomeScreen() {
           <FlatList
             horizontal={true}
             data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-            renderItem={({ item }) => <TimerCircle key={item} />}
+            renderItem={({ item }) => <TimerCircle key={item} active={false} />}
             keyExtractor={(item) => `${item}`}
             contentContainerStyle={{
               gap: 10,
@@ -110,6 +110,7 @@ export default function HomeScreen() {
                   iconName={item.icon}
                   featureName={item.name}
                   empty={item?.empty}
+                  route={item?.url}
                 />
               )}
               keyExtractor={(item) => `${item.id}`}

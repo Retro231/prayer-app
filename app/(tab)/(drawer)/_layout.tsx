@@ -12,24 +12,24 @@ export default function DrawerLayout() {
           }}
         >
           <Drawer.Screen
-            name="(tabs)" // This is the name of the page and must match the url from root
+            name="(stack)" // This is the name of the page and must match the url from root
             options={{
               drawerLabel: "Home",
-              title: "overview",
+              title: "Home",
             }}
           />
           <Drawer.Screen
-            name="compass" // This is the name of the page and must match the url from root
+            name="rate_us" // This is the name of the page and must match the url from root
             options={{
-              drawerLabel: "Compass",
-              title: "overview",
+              drawerLabel: "Rate Us",
+              title: "Rate us",
             }}
           />
           <Drawer.Screen
-            name="live_makkah_madinah" // This is the name of the page and must match the url from root
+            name="contact" // This is the name of the page and must match the url from root
             options={{
-              drawerLabel: "Live Makkah Madinah",
-              title: "overview",
+              drawerLabel: "Contact",
+              title: "contact",
             }}
           />
         </Drawer>

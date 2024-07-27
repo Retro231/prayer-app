@@ -39,7 +39,7 @@ export default function RootLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="(Stack)" />
+      <Stack.Screen name="(tab)" />
     </Stack>
   );
 }

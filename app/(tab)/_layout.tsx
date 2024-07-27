@@ -17,24 +17,12 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(drawer)"
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "home" : "home-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="al_quran"
-        options={{
-          title: "Al Quran",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "book" : "book-outline"}
               color={color}
             />
           ),
@@ -52,6 +40,19 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="al_quran"
+        options={{
+          title: "Al Quran",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "book" : "book-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="media"
         options={{

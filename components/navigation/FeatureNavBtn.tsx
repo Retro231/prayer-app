@@ -2,20 +2,24 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome5";
 import { Colors } from "@/constants/Colors";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 
 interface propsType {
-  iconName: keyof typeof FontAwesome.glyphMap;
+  iconName: keyof typeof FontAwesome.glyphMap | keyof typeof Ionicons.glyphMap;
   featureName: String;
   empty: Boolean;
+  route: String;
 }
 
 const FeatureNavBtn: React.FC<propsType> = ({
   iconName,
   featureName,
   empty,
+  route,
 }) => {
   const handlePress = () => {
-    console.log("press");
+    router.navigate(`${route}`);
   };
 
   if (empty) {
@@ -27,11 +31,20 @@ const FeatureNavBtn: React.FC<propsType> = ({
       activeOpacity={0.9}
       onPress={handlePress}
     >
-      <FontAwesome
-        name={iconName}
-        size={24}
-        style={[styles.text, { fontSize: 20 }]}
-      />
+      {featureName === "Prayer Timer" ? (
+        <Ionicons
+          name={"alarm-outline"}
+          size={24}
+          style={[styles.text, { fontSize: 28 }]}
+        />
+      ) : (
+        <FontAwesome
+          name={iconName}
+          size={24}
+          style={[styles.text, { fontSize: 20 }]}
+        />
+      )}
+
       <Text style={styles.text}>{featureName}</Text>
     </TouchableOpacity>
   );

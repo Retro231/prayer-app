@@ -3,7 +3,7 @@
     {
       "id": 0,
       "name": "Prayer Timer",
-      "icon": "clock",
+      "icon": "alarm-outline",
       "url": ""
     },
     {
@@ -16,7 +16,7 @@
       "id": 2,
       "name": "Prayer Learning",
       "icon": "pray",
-      "url": ""
+      "url": "/prayer_timer"
     },
     {
       "id": 3,
@@ -28,25 +28,13 @@
       "id": 4,
       "name": "Compass",
       "icon": "compass",
-      "url": ""
+      "url": "/compass"
     },
     {
       "id": 5,
       "name": "Islamic TV Channels",
       "icon": "tv",
-      "url": ""
-    },
-    {
-      "id": 6,
-      "name": "Islamic TV Channels",
-      "icon": "tv",
-      "url": ""
-    },
-    {
-      "id": 7,
-      "name": "Islamic TV Channels",
-      "icon": "tv",
-      "url": ""
+      "url": "/media"
     }
   ]
 }

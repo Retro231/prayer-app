@@ -4,14 +4,16 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
 import { DrawerToggleButton } from "@react-navigation/drawer";
 const { width, height } = Dimensions.get("screen");
-
-const Header = () => {
+interface propsType {
+  title: String;
+}
+const Header: React.FC<propsType> = ({ title }) => {
   return (
     <View style={styles.wrapper}>
       {/* left section */}
       <View style={styles.left}>
         <DrawerToggleButton tintColor={Colors.text2} />
-        <Text style={styles.title}>Page Title</Text>
+        <Text style={styles.title}>{title}</Text>
       </View>
       {/* right section*/}
       <View style={styles.right}>
