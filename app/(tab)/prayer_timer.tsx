@@ -1,5 +1,11 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/header/Header";
 import HeroWrapper from "@/components/Hero/HeroWrapper";
@@ -8,8 +14,10 @@ import HeroStatus from "@/components/Hero/HeroStatus";
 import HeroSmallDate from "@/components/Hero/HeroSmallDate";
 import { Colors } from "@/constants/Colors";
 import PrayerTimerBox from "@/components/Features/PrayerTimer/PrayerTimerBox";
+import usePrayerInfo from "@/hooks/usePrayerInfo";
 
 const PrayerTimerScreen = () => {
+  const { data, loading } = usePrayerInfo();
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header title={"Prayer Timer"} />
@@ -27,8 +35,8 @@ const PrayerTimerScreen = () => {
             style={{
               alignItems: "flex-end",
             }}
-            eng={"Today, 7 July"}
-            arabic={"1 Muharram 1446"}
+            eng={data.date}
+            arabic={data.hijri}
           />
         </View>
         <View style={styles.heroBottom}>
@@ -71,14 +79,25 @@ const PrayerTimerScreen = () => {
           flex: 1,
         }}
       >
-        <FlatList
-          data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          renderItem={({ item }) => <PrayerTimerBox />}
-          keyExtractor={(item) => `${item}`}
-          contentContainerStyle={{
-            gap: 10,
-          }}
-        />
+        {!loading && (
+          <FlatList
+            data={data.timeing}
+            renderItem={({ item }) => (
+              <PrayerTimerBox time={item.time} title={item.name} />
+            )}
+            keyExtractor={(item, index) => `${index}`}
+            contentContainerStyle={{
+              gap: 10,
+            }}
+          />
+        )}
+        {loading && (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <ActivityIndicator color={"#000"} />
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

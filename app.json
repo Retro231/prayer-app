@@ -13,13 +13,22 @@
       "backgroundColor": "#000"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "notification": {
+        "sound": true
+      },
+      "bundleIdentifier": "com.anonymous.prayerapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [],
+      "notification": {
+        "sound": true
+      },
+      "package": "com.anonymous.prayerapp"
     },
     "web": {
       "bundler": "metro",

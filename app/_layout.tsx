@@ -2,8 +2,17 @@ import useFonts from "@/hooks/useFonts";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-
+import Notification, { EventType } from "@notifee/react-native";
 export default function RootLayout() {
+  Notification.onBackgroundEvent(async ({ type, detail }) => {
+    const { notification, pressAction } = detail;
+    if (type === EventType.ACTION_PRESS && pressAction.id === "mark-as-read") {
+      // Update external API
+      console.log("do something");
+    }
+    await Notification.cancelNotification(notification.id);
+  });
+
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {

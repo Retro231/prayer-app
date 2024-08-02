@@ -26,7 +26,7 @@ export default function TabLayout() {
               color={color}
             />
           ),
-        }}
+        }} 
       />
       <Tabs.Screen
         name="prayer_timer"

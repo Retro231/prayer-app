@@ -6,7 +6,9 @@ import SectionTitle from "@/components/SectionTitle";
 import TimerCircle from "@/components/TimerCircle";
 import VirtualizedList from "@/components/VirtualizedList";
 import { Colors } from "@/constants/Colors";
+import usePrayerInfo from "@/hooks/usePrayerInfo";
 import { useEffect, useState } from "react";
+
 import {
   StyleSheet,
   Platform,
@@ -15,11 +17,13 @@ import {
   View,
   ScrollView,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [features, setFeatures] = useState<any[]>([]);
+  const prayerInfo = usePrayerInfo();
 
   // **********
   //The padData function ensures that the total number of items is a multiple of the number of columns (numColumns). If the last row is incomplete, it pads the array with dummy items.
@@ -83,15 +87,29 @@ export default function HomeScreen() {
             </Text>
           </View>
           <Location />
-          <FlatList
-            horizontal={true}
-            data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-            renderItem={({ item }) => <TimerCircle key={item} active={false} />}
-            keyExtractor={(item) => `${item}`}
-            contentContainerStyle={{
-              gap: 10,
-            }}
-          />
+          {prayerInfo.loading && (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <ActivityIndicator color={"#fff"} />
+            </View>
+          )}
+          {!prayerInfo.loading && (
+            <FlatList
+              horizontal={true}
+              data={prayerInfo.data?.timeing}
+              renderItem={({ item }) => (
+                <TimerCircle
+                  key={item}
+                  title={item.name}
+                  time={item.time}
+                  active={false}
+                />
+              )}
+              keyExtractor={(item, index) => `${index}`}
+              contentContainerStyle={{
+                gap: 10,
+              }}
+            />
+          )}
         </HeroWrapper>
         {/* home content */}
         <View style={styles.mainContentWrapper}>

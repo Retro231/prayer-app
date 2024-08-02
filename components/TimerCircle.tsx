@@ -3,15 +3,19 @@ import React from "react";
 import { Colors } from "@/constants/Colors";
 
 interface propsType {
+  title: String;
+  time: String;
   active: Boolean;
   bgStyle?: ViewStyle | ViewStyle[];
-  textStyle?: TextStyle | TextStyle[];
+  titleStyle?: TextStyle | TextStyle[];
 }
 
 const TimerCircle: React.FC<propsType> = ({
+  title,
+  time,
   active = false,
   bgStyle,
-  textStyle,
+  titleStyle,
 }) => {
   return (
     <View style={styles.wrapper}>
@@ -22,10 +26,10 @@ const TimerCircle: React.FC<propsType> = ({
           bgStyle,
         ]}
       >
-        <Text style={[styles.text]}>03.20</Text>
-        <Text style={[styles.text]}>AM</Text>
+        <Text style={[styles.text]}>{time}</Text>
+        {/* <Text style={[styles.text]}>AM</Text> */}
       </View>
-      <Text style={[styles.text, styles.prayerName, textStyle]}>Tahajjud</Text>
+      <Text style={[styles.text, styles.prayerName, titleStyle]}>{title}</Text>
     </View>
   );
 };
@@ -44,7 +48,10 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 50,
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.darkSea,
+    height: 50,
+    width: 50,
   },
   text: {
     fontSize: 12,

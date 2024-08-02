@@ -1,10 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 import React from "react";
 
 const CompassScreen = () => {
+
   return (
-    <View>
-      <Text>CompassScreen</Text>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Button title="Click me" />
     </View>
   );
 };
