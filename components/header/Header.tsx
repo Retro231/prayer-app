@@ -3,16 +3,34 @@ import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
 import { DrawerToggleButton } from "@react-navigation/drawer";
+import { router } from "expo-router";
 const { width, height } = Dimensions.get("screen");
 interface propsType {
   title: String;
+  goBack?: boolean;
 }
-const Header: React.FC<propsType> = ({ title }) => {
+const Header: React.FC<propsType> = ({ title, goBack }) => {
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    }
+  };
   return (
     <View style={styles.wrapper}>
       {/* left section */}
       <View style={styles.left}>
-        <DrawerToggleButton tintColor={Colors.text2} />
+        {goBack ? (
+          <Ionicons
+            style={{ paddingHorizontal: 15 }}
+            name="arrow-back"
+            size={24}
+            color={Colors.text2}
+            onPress={handleGoBack}
+          />
+        ) : (
+          <DrawerToggleButton tintColor={Colors.text2} />
+        )}
+
         <Text style={styles.title}>{title}</Text>
       </View>
       {/* right section*/}

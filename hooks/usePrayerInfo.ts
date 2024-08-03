@@ -1,33 +1,72 @@
-import { getPrayerInfo } from "@/scripts/getPrayerInfo";
 import { useState, useEffect } from "react";
 
-const usePrayerInfo = () => {
-  const [data, setData] = useState<{
-    timeing: any;
-    date: any;
-    hijri: any;
-  }>({
-    timeing: null,
-    date: null,
-    hijri: null,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+interface ApiResponse {
+  timing: any | "";
+  date: string | "";
+  hijri: string | "";
+}
 
-  const getData = async () => {
-    const data = await getPrayerInfo();
-    setData({
-      timeing: data?.timeing,
-      date: data?.date,
-      hijri: data?.hijri,
-    });
-    setLoading(false);
-  };
+const usePrayerInfo = () => {
+  const [prayerInfo, setPrayerInfo] = useState<ApiResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const url = "http://api.aladhan.com/v1/timingsByAddress?address=London,UK";
+
   useEffect(() => {
-    getData();
+    const getPrayerInfo = async () => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const result = await response.json();
+
+        const data = result.data;
+        const timingsObj = data.timings;
+        let timing = [];
+
+        for (const key in timingsObj) {
+          if (timingsObj.hasOwnProperty.call(timingsObj, key)) {
+            timing.push({
+              name: key,
+              time: timingsObj[key],
+            });
+          }
+        }
+
+        const myTiming = [
+          { name: "Fajr", time: "01:25" },
+          { name: "Sunrise", time: "01:10" },
+          { name: "Dhuhr", time: "01:20" },
+          { name: "Asr", time: "21:00" },
+          { name: "Sunset", time: "21:30" },
+          { name: "Maghrib", time: "20:48" },
+          { name: "Isha", time: "23:14" },
+          { name: "Imsak", time: "02:40" },
+          { name: "Midnight", time: "01:06" },
+          { name: "Firstthird", time: "23:40" },
+          { name: "Lastthird", time: "02:32" },
+        ];
+
+        timing = [...myTiming];
+
+        // const timings = timingsObj.map(([name, time]) => ({ name, time }));
+
+        const date = data.date.readable;
+        const hijri = `${data.date.hijri.day} ${data.date.hijri.month.en},${data.date.hijri.year}`;
+        setPrayerInfo({ timing, date, hijri });
+      } catch (error) {
+        setError("An error occurred while fetching data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getPrayerInfo();
   }, []);
 
-  return { data, loading, error };
+  return { prayerInfo, error, loading };
 };
 
 export default usePrayerInfo;

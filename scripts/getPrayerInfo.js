@@ -1,4 +1,4 @@
-export const getPrayerInfo = async () => {
+const getPrayerInfo = async () => {
   const url = "http://api.aladhan.com/v1/timingsByAddress?address=London,UK";
   try {
     const response = await fetch(url);
@@ -8,14 +8,14 @@ export const getPrayerInfo = async () => {
     const result = await response.json();
 
     const data = result.data;
-    const timeingsObj = data.timings;
-    let timeing = [];
+    const timingsObj = data.timings;
+    let timing = [];
 
-    for (const key in timeingsObj) {
-      if (timeingsObj.hasOwnProperty.call(timeingsObj, key)) {
-        timeing.push({
+    for (const key in timingsObj) {
+      if (timingsObj.hasOwnProperty.call(timingsObj, key)) {
+        timing.push({
           name: key,
-          time: timeingsObj[key],
+          time: timingsObj[key],
         });
       }
     }
@@ -34,15 +34,18 @@ export const getPrayerInfo = async () => {
       { name: "Lastthird", time: "02:32" },
     ];
 
-    timeing = [...myTiming];
+    timing = [...myTiming];
 
     // const timings = timingsObj.map(([name, time]) => ({ name, time }));
 
     const date = data.date.readable;
     const hijri = `${data.date.hijri.day} ${data.date.hijri.month.en},${data.date.hijri.year}`;
-
-    return { timeing, date, hijri };
+    setPrayerInfo({ timing, date, hijri });
   } catch (error) {
-    console.log(error);
+    setError("An error occurred while fetching data");
+  } finally {
+    setLoading(false);
   }
 };
+
+export default getPrayerInfo;
