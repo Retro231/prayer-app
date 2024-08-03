@@ -17,7 +17,7 @@ import PrayerTimerBox from "@/components/Features/PrayerTimer/PrayerTimerBox";
 import usePrayerInfo from "@/hooks/usePrayerInfo";
 
 const PrayerTimerScreen = () => {
-  const { data, loading } = usePrayerInfo();
+  const { prayerInfo, loading } = usePrayerInfo();
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header title={"Prayer Timer"} />
@@ -35,8 +35,8 @@ const PrayerTimerScreen = () => {
             style={{
               alignItems: "flex-end",
             }}
-            eng={data.date}
-            arabic={data.hijri}
+            eng={prayerInfo?.date ?? ""}
+            arabic={prayerInfo?.hijri ?? ""}
           />
         </View>
         <View style={styles.heroBottom}>
@@ -81,7 +81,7 @@ const PrayerTimerScreen = () => {
       >
         {!loading && (
           <FlatList
-            data={data.timeing}
+            data={prayerInfo?.timing}
             renderItem={({ item }) => (
               <PrayerTimerBox time={item.time} title={item.name} />
             )}

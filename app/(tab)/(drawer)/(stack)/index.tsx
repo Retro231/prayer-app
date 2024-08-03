@@ -7,15 +7,13 @@ import TimerCircle from "@/components/TimerCircle";
 import VirtualizedList from "@/components/VirtualizedList";
 import { Colors } from "@/constants/Colors";
 import usePrayerInfo from "@/hooks/usePrayerInfo";
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 
 import {
   StyleSheet,
-  Platform,
   Text,
-  TouchableOpacity,
   View,
-  ScrollView,
   FlatList,
   ActivityIndicator,
 } from "react-native";
@@ -23,8 +21,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [features, setFeatures] = useState<any[]>([]);
-  const prayerInfo = usePrayerInfo();
-
+  const { prayerInfo, loading } = usePrayerInfo();
   // **********
   //The padData function ensures that the total number of items is a multiple of the number of columns (numColumns). If the last row is incomplete, it pads the array with dummy items.
   // ***********
@@ -55,6 +52,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      {/* <StatusBar backgroundColor={"#fff"} /> */}
       <Header title={"Home"} />
       <VirtualizedList>
         {/* hero Wrapper */}
@@ -87,15 +85,15 @@ export default function HomeScreen() {
             </Text>
           </View>
           <Location />
-          {prayerInfo.loading && (
+          {loading && (
             <View style={{ justifyContent: "center", alignItems: "center" }}>
               <ActivityIndicator color={"#fff"} />
             </View>
           )}
-          {!prayerInfo.loading && (
+          {!loading && (
             <FlatList
               horizontal={true}
-              data={prayerInfo.data?.timeing}
+              data={prayerInfo?.timing}
               renderItem={({ item }) => (
                 <TimerCircle
                   key={item}
