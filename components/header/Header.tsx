@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StatusBar, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
@@ -17,6 +17,7 @@ const Header: React.FC<propsType> = ({ title, goBack }) => {
   };
   return (
     <View style={styles.wrapper}>
+      <StatusBar backgroundColor={"black" ?? "blue"} />
       {/* left section */}
       <View style={styles.left}>
         {goBack ? (

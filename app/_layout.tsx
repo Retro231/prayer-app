@@ -3,14 +3,21 @@ import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import Notification, { EventType } from "@notifee/react-native";
+import Loading from "@/components/Loading";
 export default function RootLayout() {
   Notification.onBackgroundEvent(async ({ type, detail }) => {
     const { notification, pressAction } = detail;
-    if (type === EventType.ACTION_PRESS && pressAction.id === "mark-as-read") {
-      // Update external API
-      console.log("do something");
+
+    if (notification && pressAction) {
+      if (
+        type === EventType.ACTION_PRESS &&
+        pressAction.id === "mark-as-read"
+      ) {
+        // Update external API
+        console.log("do something");
+      }
+      // await Notification.cancelNotification(notification.id ?? "");
     }
-    await Notification.cancelNotification(notification.id);
   });
 
   const [appIsReady, setAppIsReady] = useState(false);
@@ -35,11 +42,7 @@ export default function RootLayout() {
   }, []);
 
   if (!appIsReady) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator />
-      </View>
-    );
+    return <Loading />;
   }
 
   return (

@@ -9,15 +9,26 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/header/Header";
 import HeroWrapper from "@/components/Hero/HeroWrapper";
-import Location from "@/components/Location";
 import HeroStatus from "@/components/Hero/HeroStatus";
 import HeroSmallDate from "@/components/Hero/HeroSmallDate";
 import { Colors } from "@/constants/Colors";
 import PrayerTimerBox from "@/components/Features/PrayerTimer/PrayerTimerBox";
 import usePrayerInfo from "@/hooks/usePrayerInfo";
+import MyLocation from "@/components/MyLocation";
+import CountdownTimer from "@/components/CountdownTimer";
 
 const PrayerTimerScreen = () => {
   const { prayerInfo, loading } = usePrayerInfo();
+
+  // Assuming time is in HH:mm format and today's date
+  const targetTime = new Date();
+  const [hours, minutes] = prayerInfo
+    ? prayerInfo?.upcomingPrayer.time.split(":")
+    : ["00", "00"];
+  targetTime.setHours(parseInt(hours, 10));
+  targetTime.setMinutes(parseInt(minutes, 10));
+  targetTime.setSeconds(0);
+  
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header title={"Prayer Timer"} />
@@ -27,10 +38,12 @@ const PrayerTimerScreen = () => {
           <HeroStatus
             style={{
               alignItems: "flex-start",
+              width: "50%",
             }}
             title={"Upcoming Prayer"}
-            info={"Fajr"}
+            info={prayerInfo?.upcomingPrayer.name ?? ""}
           />
+
           <HeroSmallDate
             style={{
               alignItems: "flex-end",
@@ -54,20 +67,11 @@ const PrayerTimerScreen = () => {
                 color: Colors.text2,
               }}
             >
-              03:20 AM
+              {prayerInfo?.upcomingPrayer.time}
             </Text>
-            <Text
-              style={{
-                fontFamily: "MontserratMedium",
-                fontWeight: "medium",
-                fontSize: 24,
-                color: Colors.text2,
-              }}
-            >
-              04:02:55
-            </Text>
+            <CountdownTimer targetTime={targetTime} />
           </View>
-          <Location />
+          <MyLocation />
         </View>
       </HeroWrapper>
       {/* main content */}
@@ -112,6 +116,7 @@ const styles = StyleSheet.create({
   heroTop: {
     flexDirection: "row",
     justifyContent: "space-between",
+    width: "100%",
   },
   heroBottom: {
     alignItems: "center",

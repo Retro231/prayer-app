@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 // import Geolocation from "@react-native-community/geolocation";
 import * as Location from "expo-location";
 import { Magnetometer } from "expo-sensors";
+import Loading from "@/components/Loading";
 
 interface propsType {
   getInfo: Function;
@@ -14,6 +15,7 @@ const CompassDevice: React.FC<propsType> = ({ getInfo }) => {
   const [qiblaDirection, setQiblaDirection] = useState(0);
   const [qiblaDistance, setQiblaDistance] = useState(0);
   const [qiblaCardinalDirection, setQiblaCardinalDirection] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getInfo({ qiblaDirection, qiblaDistance, qiblaCardinalDirection });
@@ -39,6 +41,7 @@ const CompassDevice: React.FC<propsType> = ({ getInfo }) => {
 
       const cardinalDirection = getCardinalDirection(qibla);
       setQiblaCardinalDirection(cardinalDirection);
+      setLoading(false);
     };
 
     getLocation();
@@ -135,6 +138,10 @@ const CompassDevice: React.FC<propsType> = ({ getInfo }) => {
     return directions[index];
     // return directionFullForms[index];
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <View style={styles.container}>

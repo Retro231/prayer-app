@@ -113,7 +113,6 @@ const PrayerTimerBox: React.FC<propsType> = ({ time, title }) => {
       <TimerCircle
         title={title}
         time={time}
-        active={false}
         bgStyle={{ backgroundColor: Colors.darkSea, borderColor: "#fff" }}
         titleStyle={{
           color: Colors.darkSea,

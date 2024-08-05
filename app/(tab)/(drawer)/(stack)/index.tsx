@@ -1,6 +1,7 @@
 import Header from "@/components/header/Header";
 import HeroWrapper from "@/components/Hero/HeroWrapper";
-import Location from "@/components/Location";
+import Loading from "@/components/Loading";
+import MyLocation from "@/components/MyLocation";
 import FeatureNavBtn from "@/components/navigation/FeatureNavBtn";
 import SectionTitle from "@/components/SectionTitle";
 import TimerCircle from "@/components/TimerCircle";
@@ -50,6 +51,22 @@ export default function HomeScreen() {
     setFeatures(data);
   }, []);
 
+  // useEffect(() => {
+  //   const url = "https://api.quran.com/api/v4/chapters";
+  //   const headers = {
+  //     Accept: "application/json",
+  //   };
+
+  //   fetch(url, { method: "GET", headers: headers })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log(JSON.stringify(data));
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     });
+  // }, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* <StatusBar backgroundColor={"#fff"} /> */}
@@ -84,30 +101,18 @@ export default function HomeScreen() {
               1 Muharram 1446
             </Text>
           </View>
-          <Location />
-          {loading && (
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <ActivityIndicator color={"#fff"} />
-            </View>
-          )}
-          {!loading && (
-            <FlatList
-              horizontal={true}
-              data={prayerInfo?.timing}
-              renderItem={({ item }) => (
-                <TimerCircle
-                  key={item}
-                  title={item.name}
-                  time={item.time}
-                  active={false}
-                />
-              )}
-              keyExtractor={(item, index) => `${index}`}
-              contentContainerStyle={{
-                gap: 10,
-              }}
-            />
-          )}
+          <MyLocation />
+          <FlatList
+            horizontal={true}
+            data={prayerInfo?.timing}
+            renderItem={({ item }) => (
+              <TimerCircle key={item} title={item.name} time={item.time} />
+            )}
+            keyExtractor={(item, index) => `${index}`}
+            contentContainerStyle={{
+              gap: 10,
+            }}
+          />
         </HeroWrapper>
         {/* home content */}
         <View style={styles.mainContentWrapper}>

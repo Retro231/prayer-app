@@ -1,11 +1,10 @@
 import { StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Colors } from "@/constants/Colors";
-
+import usePrayerInfo from "@/hooks/usePrayerInfo";
 interface propsType {
   title: String;
   time: String;
-  active: Boolean;
   bgStyle?: ViewStyle | ViewStyle[];
   titleStyle?: TextStyle | TextStyle[];
 }
@@ -13,23 +12,49 @@ interface propsType {
 const TimerCircle: React.FC<propsType> = ({
   title,
   time,
-  active = false,
   bgStyle,
   titleStyle,
 }) => {
+  const [active, setActive] = useState(false);
+  const { prayerInfo, loading } = usePrayerInfo();
+
+  useEffect(() => {
+    if (prayerInfo?.upcomingPrayer.name === title) {
+      setActive(true);
+    }
+  }, [loading]);
+
   return (
     <View style={styles.wrapper}>
-      <View
-        style={[
-          styles.circle,
-          active && { backgroundColor: "#1D3C43", borderColor: Colors.green },
-          bgStyle,
-        ]}
-      >
-        <Text style={[styles.text]}>{time}</Text>
-        {/* <Text style={[styles.text]}>AM</Text> */}
-      </View>
-      <Text style={[styles.text, styles.prayerName, titleStyle]}>{title}</Text>
+      {loading && (
+        <View
+          style={[
+            styles.circle,
+            bgStyle,
+            active && { backgroundColor: "green", borderColor: Colors.green },
+          ]}
+        >
+          <Text style={[styles.text]}>...</Text>
+          {/* <Text style={[styles.text]}>AM</Text> */}
+        </View>
+      )}
+      {!loading && (
+        <>
+          <View
+            style={[
+              styles.circle,
+              bgStyle,
+              active && { backgroundColor: "green", borderColor: Colors.green },
+            ]}
+          >
+            <Text style={[styles.text]}>{time}</Text>
+            {/* <Text style={[styles.text]}>AM</Text> */}
+          </View>
+          <Text style={[styles.text, styles.prayerName, titleStyle]}>
+            {title}
+          </Text>
+        </>
+      )}
     </View>
   );
 };
@@ -54,7 +79,7 @@ const styles = StyleSheet.create({
     width: 50,
   },
   text: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "bold",
     color: "#fff",
     fontFamily: "MontserratSemiBold",

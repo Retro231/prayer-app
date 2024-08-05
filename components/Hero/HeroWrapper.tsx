@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ViewStyle } from "react-native";
+import { Dimensions, StyleSheet, Text, View, ViewStyle } from "react-native";
 import React, { Component } from "react";
 import { ReactNode } from "react";
 import { Colors } from "@/constants/Colors";
@@ -23,5 +23,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 30,
     paddingBottom: 16,
     paddingTop: 0,
+    width: Dimensions.get("screen").width,
   },
 });

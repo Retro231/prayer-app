@@ -5,10 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import HeroWrapper from "@/components/Hero/HeroWrapper";
 import HeroStatus from "@/components/Hero/HeroStatus";
 import HeroSmallDate from "@/components/Hero/HeroSmallDate";
-import Location from "@/components/Location";
 import { Colors } from "@/constants/Colors";
-import CompassDevice from "@/components/Features/compass/CompassDevice";
+import CompassDevice from "@/components/Features/Compass/CompassDevice";
 import usePrayerInfo from "@/hooks/usePrayerInfo";
+import MyLocation from "@/components/MyLocation";
 
 const CompassScreen: React.FC = () => {
   const { prayerInfo } = usePrayerInfo();
@@ -26,17 +26,23 @@ const CompassScreen: React.FC = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <Header title={"Compass"} goBack />
       <HeroWrapper style={{ gap: 10, paddingBottom: 20, paddingTop: 20 }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <View style={{ alignItems: "flex-start", gap: 10 }}>
-            <Location />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <View style={{ alignItems: "flex-start", gap: 20, width: "50%" }}>
+            <MyLocation />
             <HeroStatus
               title={"Your Kibla"}
-              info={qiblaCardinalDirection ?? ""}
+              info={qiblaCardinalDirection ?? "..."}
             />
           </View>
           <HeroSmallDate
-            eng={prayerInfo?.date ?? ""}
-            arabic={prayerInfo?.hijri ?? ""}
+            eng={prayerInfo?.date ?? "..."}
+            arabic={prayerInfo?.hijri ?? "..."}
             style={{ alignItems: "flex-end" }}
           />
         </View>
@@ -51,7 +57,7 @@ const CompassScreen: React.FC = () => {
               color: Colors.text2,
             }}
           >
-            Qibla Direction: {qiblaDirection.toFixed(2)}°
+            Qibla Direction: {qiblaDirection.toFixed(2) }°
           </Text>
           <Text
             style={{

@@ -4,13 +4,13 @@
       "id": 0,
       "name": "Prayer Timer",
       "icon": "alarm-outline",
-      "url": ""
+      "url": "/prayer_timer"
     },
     {
       "id": 1,
       "name": "Al Quran",
       "icon": "book-open",
-      "url": ""
+      "url": "/al_quran"
     },
     {
       "id": 2,
