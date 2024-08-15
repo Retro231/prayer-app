@@ -26,7 +26,7 @@ export default function TabLayout() {
               color={color}
             />
           ),
-        }} 
+        }}
       />
       <Tabs.Screen
         name="prayer_timer"
@@ -41,7 +41,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="al_quran"
+        name="(QuranStack)"
         options={{
           title: "Al Quran",
           tabBarIcon: ({ color, focused }) => (

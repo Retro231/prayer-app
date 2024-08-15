@@ -8,7 +8,6 @@ import TimerCircle from "@/components/TimerCircle";
 import VirtualizedList from "@/components/VirtualizedList";
 import { Colors } from "@/constants/Colors";
 import usePrayerInfo from "@/hooks/usePrayerInfo";
-import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 
 import {
@@ -17,6 +16,7 @@ import {
   View,
   FlatList,
   ActivityIndicator,
+  StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -69,7 +69,6 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* <StatusBar backgroundColor={"#fff"} /> */}
       <Header title={"Home"} />
       <VirtualizedList>
         {/* hero Wrapper */}

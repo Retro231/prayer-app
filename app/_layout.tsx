@@ -1,9 +1,10 @@
 import useFonts from "@/hooks/useFonts";
 import { Stack } from "expo-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import Notification, { EventType } from "@notifee/react-native";
 import Loading from "@/components/Loading";
+import { MyContext, MyProvider } from "../context/MyContext";
 export default function RootLayout() {
   Notification.onBackgroundEvent(async ({ type, detail }) => {
     const { notification, pressAction } = detail;
@@ -25,11 +26,8 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        // Pre-load fonts, make any API calls you need to do here
-        await useFonts();
-        // Artificially delay for two seconds to simulate a slow loading
-        // experience. Please remove this if you copy and paste the code!
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // make any API calls you need to do here
+        await useFonts(); //Pre-load fonts,
       } catch (e) {
         console.warn(e);
       } finally {
@@ -41,17 +39,23 @@ export default function RootLayout() {
     prepare();
   }, []);
 
+  useEffect(() => {
+    (async () => {})();
+  });
+
   if (!appIsReady) {
     return <Loading />;
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="(tab)" />
-    </Stack>
+    <MyProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="(tab)" />
+      </Stack>
+    </MyProvider>
   );
 }

@@ -171,11 +171,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#F5FCFF",
   },
-  text: {
-    fontSize: 20,
-    textAlign: "center",
-    margin: 10,
-  },
   compassContainer: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").width,
