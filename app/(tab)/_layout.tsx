@@ -2,17 +2,25 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
+import { StyleSheet } from "react-native";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.tint,
+        tabBarActiveTintColor: Colors.lightSea,
         tabBarInactiveTintColor: "#fff",
-        tabBarActiveBackgroundColor: "#D9D9D9",
+        // tabBarActiveBackgroundColor: "#D9D9D9",
         headerShown: false,
         tabBarStyle: {
           backgroundColor: Colors.lightSea,
+          height: 70,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          marginBottom: 5,
+          fontWeight: "bold",
+          color: "white",
         },
       }}
     >
@@ -24,6 +32,10 @@ export default function TabLayout() {
             <TabBarIcon
               name={focused ? "home" : "home-outline"}
               color={color}
+              style={[
+                styles.tabIcon,
+                { backgroundColor: `${focused ? "#D9D9D9" : "transparent"}` },
+              ]}
             />
           ),
         }}
@@ -36,6 +48,10 @@ export default function TabLayout() {
             <TabBarIcon
               name={focused ? "alarm" : "alarm-outline"}
               color={color}
+              style={[
+                styles.tabIcon,
+                { backgroundColor: `${focused ? "#D9D9D9" : "transparent"}` },
+              ]}
             />
           ),
         }}
@@ -48,6 +64,10 @@ export default function TabLayout() {
             <TabBarIcon
               name={focused ? "book" : "book-outline"}
               color={color}
+              style={[
+                styles.tabIcon,
+                { backgroundColor: `${focused ? "#D9D9D9" : "transparent"}` },
+              ]}
             />
           ),
         }}
@@ -58,7 +78,14 @@ export default function TabLayout() {
         options={{
           title: "Media",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? "tv" : "tv-outline"} color={color} />
+            <TabBarIcon
+              name={focused ? "tv" : "tv-outline"}
+              color={color}
+              style={[
+                styles.tabIcon,
+                { backgroundColor: `${focused ? "#D9D9D9" : "transparent"}` },
+              ]}
+            />
           ),
         }}
       />
@@ -70,6 +97,10 @@ export default function TabLayout() {
             <TabBarIcon
               name={focused ? "person" : "person-outline"}
               color={color}
+              style={[
+                styles.tabIcon,
+                { backgroundColor: `${focused ? "#D9D9D9" : "transparent"}` },
+              ]}
             />
           ),
         }}
@@ -77,3 +108,11 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabIcon: {
+    paddingHorizontal: 18,
+    paddingVertical: 4,
+    borderRadius: 15,
+  },
+});

@@ -11,34 +11,57 @@ import { Colors } from "@/constants/Colors";
 // "revelationType": "Meccan"
 
 interface ListItemProps {
-  id: number;
-  name: string;
-  englishName: string;
-  englishNameTranslation: string;
-  juz_number: number;
-  verse_mapping: object;
+  surah_number?: number;
+  name?: string;
+  englishName?: string;
+  englishNameTranslation?: string;
+  juz_number?: number;
+  verse_mapping?: string;
+  bookmarkTitle?: string;
+  bookmarkList?: any;
+  bookmarkId?: number;
   onPress?: () => void;
+  onBookmarkPress?: any;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  id,
+  surah_number,
   name,
   englishName,
   englishNameTranslation,
   juz_number,
   verse_mapping,
+  bookmarkTitle,
+  bookmarkList,
+  bookmarkId,
   onPress,
+  onBookmarkPress,
 }) => {
-  const [firstKey, setFirstKey] = useState<String | null>(null);
-  const [lastKey, setLastKey] = useState<String | null>(null);
+  // check bookmark -
 
-  useEffect(() => {
-    if (verse_mapping) {
-      const verseKeys = Object.keys(verse_mapping);
-      setFirstKey(verseKeys[0]);
-      setLastKey(verseKeys[verseKeys.length - 1]);
+  // step-1 : onload check if bookmark exitst - if exit make it red
+  // step-2 : onbookmark press - make exit true
+  const [exist, setExist] = useState<boolean>(false);
+
+  const handleBookmark = () => {
+    onBookmarkPress();
+    if (!exist) {
+      setExist(true);
     }
-  }, [verse_mapping]);
+    console.log(bookmarkList);
+  };
+
+  // if (juz_number) {
+  //   const isFound = bookmarkList?.find(
+  //     (data: any) => juz_number === data.data.juz_number
+  //   );
+  //   isFound && setExist(true);
+  // } else {
+  //   const isFound = bookmarkList?.find(
+  //     (data: any) => surah_number === data.data.data_id
+  //   );
+  //   isFound && setExist(true);
+  // }
 
   return (
     <TouchableOpacity
@@ -47,29 +70,31 @@ const ListItem: React.FC<ListItemProps> = ({
       onPress={onPress}
     >
       <View style={styles.numberContainer}>
-        <Text style={styles.number}>{id}</Text>
+        {!bookmarkId ? (
+          <Text style={styles.number}>{`${
+            juz_number ? juz_number : surah_number
+          }`}</Text>
+        ) : (
+          <Text style={styles.number}>{bookmarkId}</Text>
+        )}
       </View>
       <View style={styles.titleWrapper}>
-        <Text style={styles.title}>{englishName}</Text>
-        {name && (
-          <>
-            <Text style={styles.title}> | </Text>
-            <Text style={styles.title}>{name}</Text>
-          </>
-        )}
+        {bookmarkTitle && <Text style={styles.title}>{bookmarkTitle}</Text>}
+        {name && <Text style={styles.title}>{englishName}</Text>}
+        {name && <Text style={styles.title}>{name}</Text>}
         {juz_number && verse_mapping && (
           <>
             {/* <Text style={styles.title}>{juz_number}</Text> */}
-            <Text style={styles.title}>{`Surah (${firstKey}-${lastKey})`}</Text>
+            <Text style={styles.title}>{`Surah (${verse_mapping})`}</Text>
           </>
         )}
       </View>
 
       <Ionicons
-        onPress={() => console.log("bookmark")}
+        onPress={handleBookmark}
         name="bookmark-outline"
         size={24}
-        color="white"
+        color={exist ? "red" : "white"}
         style={styles.icon}
       />
     </TouchableOpacity>
@@ -101,20 +126,23 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
     fontWeight: "bold",
     color: "white",
-    fontSize: 12,
+    fontSize: 14,
   },
   titleWrapper: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
+    alignItems: "center",
+    gap: 2,
   },
   title: {
     fontFamily: "MontserratMedium",
     fontWeight: "medium",
     color: "white",
-    fontSize: 16,
+    fontSize: 18,
   },
   icon: {
     // marginLeft: "auto",
+    fontSize: 28,
   },
 });
 

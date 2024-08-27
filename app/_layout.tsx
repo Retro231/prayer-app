@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import Notification, { EventType } from "@notifee/react-native";
 import Loading from "@/components/Loading";
-import { MyContext, MyProvider } from "../context/MyContext";
 export default function RootLayout() {
   Notification.onBackgroundEvent(async ({ type, detail }) => {
     const { notification, pressAction } = detail;
@@ -48,14 +47,12 @@ export default function RootLayout() {
   }
 
   return (
-    <MyProvider>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="(tab)" />
-      </Stack>
-    </MyProvider>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="(tab)" />
+    </Stack>
   );
 }
