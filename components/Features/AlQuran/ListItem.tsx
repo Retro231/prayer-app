@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
@@ -17,11 +17,9 @@ interface ListItemProps {
   englishNameTranslation?: string;
   juz_number?: number;
   verse_mapping?: string;
-  bookmarkTitle?: string;
-  bookmarkList?: any;
-  bookmarkId?: number;
   onPress?: () => void;
   onBookmarkPress?: any;
+  isBookmarked?: any;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
@@ -31,37 +29,26 @@ const ListItem: React.FC<ListItemProps> = ({
   englishNameTranslation,
   juz_number,
   verse_mapping,
-  bookmarkTitle,
-  bookmarkList,
-  bookmarkId,
   onPress,
   onBookmarkPress,
+  isBookmarked,
 }) => {
   // check bookmark -
 
   // step-1 : onload check if bookmark exitst - if exit make it red
   // step-2 : onbookmark press - make exit true
   const [exist, setExist] = useState<boolean>(false);
+  const isBookmarkRef = useRef(isBookmarked);
 
   const handleBookmark = () => {
     onBookmarkPress();
-    if (!exist) {
-      setExist(true);
+    setExist(!exist);
+    if (isBookmarkRef.current === 1) {
+      isBookmarkRef.current = 0;
+    } else {
+      isBookmarkRef.current = 1;
     }
-    console.log(bookmarkList);
   };
-
-  // if (juz_number) {
-  //   const isFound = bookmarkList?.find(
-  //     (data: any) => juz_number === data.data.juz_number
-  //   );
-  //   isFound && setExist(true);
-  // } else {
-  //   const isFound = bookmarkList?.find(
-  //     (data: any) => surah_number === data.data.data_id
-  //   );
-  //   isFound && setExist(true);
-  // }
 
   return (
     <TouchableOpacity
@@ -70,22 +57,17 @@ const ListItem: React.FC<ListItemProps> = ({
       onPress={onPress}
     >
       <View style={styles.numberContainer}>
-        {!bookmarkId ? (
-          <Text style={styles.number}>{`${
-            juz_number ? juz_number : surah_number
-          }`}</Text>
-        ) : (
-          <Text style={styles.number}>{bookmarkId}</Text>
-        )}
+        <Text style={styles.number}>{`${
+          juz_number ? juz_number : surah_number
+        }`}</Text>
       </View>
       <View style={styles.titleWrapper}>
-        {bookmarkTitle && <Text style={styles.title}>{bookmarkTitle}</Text>}
         {name && <Text style={styles.title}>{englishName}</Text>}
         {name && <Text style={styles.title}>{name}</Text>}
         {juz_number && verse_mapping && (
           <>
             {/* <Text style={styles.title}>{juz_number}</Text> */}
-            <Text style={styles.title}>{`Surah (${verse_mapping})`}</Text>
+            <Text style={styles.title}>{`Ayah (${verse_mapping})`}</Text>
           </>
         )}
       </View>
@@ -94,7 +76,7 @@ const ListItem: React.FC<ListItemProps> = ({
         onPress={handleBookmark}
         name="bookmark-outline"
         size={24}
-        color={exist ? "red" : "white"}
+        color={isBookmarkRef.current === 1 ? "red" : "white"}
         style={styles.icon}
       />
     </TouchableOpacity>

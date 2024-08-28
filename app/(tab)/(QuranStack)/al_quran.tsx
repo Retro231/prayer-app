@@ -16,9 +16,16 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import ListItem from "@/components/Features/AlQuran/ListItem";
 import { router } from "expo-router";
-import { getJuz, getJuzData, getSurahList } from "@/scripts/getQuranData";
 import Loading from "@/components/Loading";
 import { useSQLiteContext } from "expo-sqlite";
+import {
+  initializeDB,
+  filterChapters,
+  filterSurahList,
+  filterJuzList,
+  filterBookmark,
+  toggleBookmark,
+} from "@/scripts/database";
 
 // "number": 1,
 // "name": "سُورَةُ ٱلْفَاتِحَةِ",
@@ -28,30 +35,21 @@ import { useSQLiteContext } from "expo-sqlite";
 // "revelationType": "Meccan"
 
 interface Item {
-  number: number;
-  name: string;
-  englishName: string;
-  englishNameTranslation: string;
-  numberOfAyahs: number;
+  id: number;
+  surah_number: number;
+  surah_name: string;
+  surah_englishName: string;
+  surah_englishNameTranslation: string;
+  surah_numberOfAyahs: number;
+  isBookmarked: number;
 }
 
 interface JuzItem extends Item {
   juz_number: number;
-  verses_count: number;
-  verse_mapping: object;
-}
-
-interface Bookmarks {
-  id: number;
-  title: string;
-  data: {
-    surah_number: number;
-    name: string;
-    englishName: string;
-    numberOfAyahs: number;
-    englishNameTranslation: string;
-    juz_number: number;
-  };
+  juz_verse_mapping: string;
+  juz_first_verse_id: number;
+  juz_last_verse_id: number;
+  juz_verses_count: number;
 }
 
 const menuItem = [
@@ -71,57 +69,29 @@ const menuItem = [
 
 const AlQuranScreen: React.FC = () => {
   const [active, setActive] = useState("Surah");
-  const [surahList, setSurahList] = useState(null);
-  const [juzList, setJuzList] = useState<JuzItem[]>([]);
-  const [bookmarks, setBookmarks] = useState<Bookmarks[] | null | []>(null);
-
-  const bookmarkRef = useRef<any>();
-
+  const [chapters, setChapters] = useState<any>(null);
+  const [surahList, setSurahList] = useState<any>(null);
+  const [juzList, setJuzList] = useState<any>(null);
+  const [bookmarks, setBookmarks] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   const db = useSQLiteContext();
 
-  // const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    (async () => {
-      const list = await getSurahList();
-      const juzs = await getJuz();
-      setJuzList(juzs);
-      setSurahList(list);
-    })();
+    getDBinfo();
+  }, [active]);
 
+  const getDBinfo = async () => {
     db.withTransactionAsync(async () => {
-      await initDB();
-      await getBookmarks();
+      setLoading(true);
+      await initializeDB();
+      const sl = await filterSurahList();
+      const jl = await filterJuzList();
+      const bl = await filterBookmark();
+      setSurahList(sl);
+      setJuzList(jl);
+      setBookmarks(bl);
+      setLoading(false);
     });
-  }, []);
-
-  // initialize database
-  const initDB = async () => {
-    await db.execAsync(`CREATE TABLE IF NOT EXISTS Bookmarks (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          title INTEGER NOT NULL,
-          data TEXT
-        );`);
-  };
-  // get bookmarks array
-  const getBookmarks = async () => {
-    const result = await db.getAllAsync<Bookmarks[]>(
-      `SELECT * FROM Bookmarks ORDER BY id DESC;`
-    );
-
-    // Parse the JSON string in the 'data' field and map the result
-    const parsedResult = result.map((item: any) => {
-      // Parse the JSON string in the 'data' field
-      const parsedData = JSON.parse(item.data);
-      // Return a new object with parsed data
-      return {
-        ...item,
-        data: parsedData,
-      };
-    });
-    setBookmarks(parsedResult);
-    bookmarkRef.current = parsedResult;
-    // console.log("result: ", result);
   };
 
   // -----------flatlist surah item -------------------
@@ -130,57 +100,46 @@ const AlQuranScreen: React.FC = () => {
       router.push({
         pathname: "(QuranStack)/quran_page",
         params: {
-          id: item.number,
-          name: item.name,
-          englishName: item.englishName,
-          numberOfAyahs: item.numberOfAyahs,
-          englishNameTranslation: item.englishNameTranslation,
+          id: item.surah_number,
+          name: item.surah_name,
+          englishName: item.surah_englishName,
+          englishNameTranslation: item.surah_englishNameTranslation,
+          numberOfAyahs: item.surah_numberOfAyahs,
         },
       });
     };
 
-    // INSERT INTO bookmarks (title, url) VALUES (?, ?);
-    const handleBookmarkPress = () => {
-      db.withTransactionAsync(async () => {
-        await insertData();
-        await getBookmarks();
-      });
-    };
+    const handleBookmarkPress = async () => {
+      console.log(item);
 
-    const insertData = async () => {
-      const data = {
-        surah_number: item.number,
-        name: item.name,
-        englishName: item.englishName,
-        numberOfAyahs: item.numberOfAyahs,
-        englishNameTranslation: item.englishNameTranslation,
-      };
-      const dataString = JSON.stringify(data);
-      await db.runAsync(
-        "INSERT INTO Bookmarks (title, data) VALUES (?, ?)",
-        item.englishName,
-        dataString
-      );
+      await toggleBookmark(item.id);
+      // await getDBinfo();
+      if (item.isBookmarked !== 1) {
+        setSurahList((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+        setBookmarks((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+      } else {
+        setBookmarks((prev: any) =>
+          prev.filter((prevData: any) => prevData.id !== item.id)
+        );
+        setSurahList((prev: any) => [...prev, { ...item, isBookmarked: 0 }]);
+      }
     };
 
     return (
       <ListItem
         onPress={() => handlePress()}
         onBookmarkPress={handleBookmarkPress}
-        surah_number={item.number}
-        name={item.name}
-        englishName={item.englishName}
-        englishNameTranslation={item.englishNameTranslation}
-        bookmarkList={bookmarkRef.current}
+        surah_number={item.surah_number}
+        name={item.surah_name}
+        englishName={item.surah_englishName}
+        englishNameTranslation={item.surah_englishNameTranslation}
+        isBookmarked={item.isBookmarked}
       />
     );
   };
   // ---------- flatlist Juz item -------------
   const renderJuzItem = ({ item }: ListRenderItemInfo<JuzItem>) => {
-    const verseKeys = Object.keys(item.verse_mapping);
-    const margedVerseMapping = `${verseKeys[0]}-${
-      verseKeys[verseKeys.length - 1]
-    }`;
+    const margedVerseMapping = `${item.juz_first_verse_id}-${item.juz_last_verse_id}`;
 
     const handlePress = () => {
       console.log(item);
@@ -193,74 +152,75 @@ const AlQuranScreen: React.FC = () => {
       });
     };
 
-    // INSERT INTO bookmarks (title, url) VALUES (?, ?);
-    const handleBookmarkPress = () => {
-      db.withTransactionAsync(async () => {
-        await insertData();
-        await getBookmarks();
-      });
+    const handleBookmarkPress = async () => {
+      console.log(item);
+
+      await toggleBookmark(item.id);
+      // await getDBinfo();
+      if (item.isBookmarked !== 1) {
+        setJuzList((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+        setBookmarks((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+      } else {
+        setBookmarks((prev: any) =>
+          prev.filter((prevData: any) => prevData.id !== item.id)
+        );
+        setJuzList((prev: any) => [...prev, { ...item, isBookmarked: 0 }]);
+      }
     };
 
-    const insertData = async () => {
-      const data = {
-        juz_number: item.juz_number,
-        verse_mapping: margedVerseMapping,
-      };
-      const dataString = JSON.stringify(data);
-      await db.runAsync(
-        "INSERT INTO Bookmarks (title, data) VALUES (?, ?)",
-        `Surah (${margedVerseMapping})`,
-        dataString
-      );
-    };
     return (
       <ListItem
         onPress={() => handlePress()}
         onBookmarkPress={handleBookmarkPress}
         juz_number={item.juz_number}
         verse_mapping={margedVerseMapping}
-        bookmarkList={bookmarkRef.current}
+        isBookmarked={item.isBookmarked}
       />
     );
   };
   // ----------flatlist bookmarks
-  const renderBookmarks = ({ item }: ListRenderItemInfo<Bookmarks>) => {
-    // data_id: item.number,
-    // name: item.name,
-    // englishName: item.englishName,
-    // numberOfAyahs: item.numberOfAyahs,
-    // englishNameTranslation: item.englishNameTranslation,
-    // juz_number: item.juz_number,
+  const renderBookmarks = ({ item }: ListRenderItemInfo<any>) => {
     const handlePress = () => {
       router.push({
         pathname: "(QuranStack)/quran_page",
-        params: {
-          id: item.data.surah_number,
-          name: item.data.name,
-          englishName: item.data.englishName,
-          numberOfAyahs: item.data.numberOfAyahs,
-          englishNameTranslation: item.data.englishNameTranslation,
-          juz_number: item.data.juz_number,
-        },
+        params: {},
       });
     };
-
+    const margedVerseMapping = `${item.juz_first_verse_id}-${item.juz_last_verse_id}`;
     // // INSERT INTO bookmarks (title, url) VALUES (?, ?);
-    const handleBookmarkPress = () => {
-      console.log(item);
-
-      console.log("bookmark press");
+    const handleBookmarkPress = async () => {
+      await toggleBookmark(item.id);
+      // await getDBinfo();
+      if (item.isBookmarked !== 1) {
+        if (item.juz_number) {
+          setJuzList((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+        } else {
+          setSurahList((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+        }
+        setBookmarks((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+      } else {
+        setBookmarks((prev: any) =>
+          prev.filter((prevData: any) => prevData.id !== item.id)
+        );
+        if (item.juz_number) {
+          setJuzList((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+        } else {
+          setSurahList((prev: any) => [...prev, { ...item, isBookmarked: 1 }]);
+        }
+      }
     };
 
     return (
       <ListItem
         onPress={() => handlePress()}
         onBookmarkPress={handleBookmarkPress}
-        bookmarkId={item.id}
-        bookmarkTitle={item.title}
-        bookmarkList={bookmarkRef.current}
-        surah_number={item.id}
-        juz_number={item.data.juz_number}
+        surah_number={item.surah_number}
+        name={item.surah_name}
+        englishName={item.surah_englishName}
+        englishNameTranslation={item.surah_englishNameTranslation}
+        juz_number={item.juz_number}
+        verse_mapping={margedVerseMapping}
+        isBookmarked={item.isBookmarked}
       />
     );
   };
@@ -300,7 +260,7 @@ const AlQuranScreen: React.FC = () => {
           />
         </View>
         {/* items */}
-        {surahList !== null && bookmarks !== null && juzList !== null ? (
+        {!loading && surahList !== null && juzList !== null ? (
           active === "Surah" ? (
             <FlatList
               style={{ flex: 1 }}
