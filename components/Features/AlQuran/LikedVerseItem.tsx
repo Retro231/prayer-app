@@ -11,65 +11,47 @@ import { Colors } from "@/constants/Colors";
 // "revelationType": "Meccan"
 
 interface ListItemProps {
-  surah_number?: number;
+  id?: number;
   name?: string;
   englishName?: string;
-  englishNameTranslation?: string;
-  juz_number?: number;
-  verse_mapping?: string;
-  onPress?: () => void;
-  onBookmarkPress?: any;
-  isBookmarked?: any;
-  setBookmarks?: any;
+  surahNo?: number;
+  ayahNo?: number;
+  handleDelete?: () => void;
+  handlePress?: () => void;
 }
 
-const ListItem: React.FC<ListItemProps> = ({
-  surah_number,
+const LikedVerseItem: React.FC<ListItemProps> = ({
+  id,
   name,
   englishName,
-  englishNameTranslation,
-  juz_number,
-  verse_mapping,
-  onPress,
-  onBookmarkPress,
-  isBookmarked,
-  setBookmarks,
+  surahNo,
+  ayahNo,
+  handleDelete,
+  handlePress,
 }) => {
-  const [exist, setExist] = useState(isBookmarked);
-
-  const handleBookmark = () => {
-    setExist(!exist);
-    onBookmarkPress();
-  };
-
   return (
     <TouchableOpacity
       activeOpacity={0.5}
       style={styles.container}
-      onPress={onPress}
+      onPress={handlePress}
     >
       <View style={styles.numberContainer}>
-        <Text style={styles.number}>{`${
-          juz_number ? juz_number : surah_number
-        }`}</Text>
+        <Text style={styles.number}>{`${id}`}</Text>
       </View>
       <View style={styles.titleWrapper}>
         {name && <Text style={styles.title}>{englishName}</Text>}
         {name && <Text style={styles.title}>{name}</Text>}
-        {juz_number && verse_mapping && (
-          <>
-            {/* <Text style={styles.title}>{juz_number}</Text> */}
-            <Text style={styles.title}>{`Juz - ${juz_number}`}</Text>
-            <Text style={styles.title}>{`Ayah (${verse_mapping})`}</Text>
-          </>
-        )}
+      </View>
+      <View style={styles.titleWrapper}>
+        <Text style={styles.title}>{`Verse`}</Text>
+        <Text style={styles.title}>{`${ayahNo}`}</Text>
       </View>
 
       <Ionicons
-        onPress={() => handleBookmark()}
-        name={exist ? "bookmark" : "bookmark-outline"}
+        onPress={handleDelete}
+        name={"close"}
         size={24}
-        color={exist ? "#ffffff" : "white"}
+        color={"white"}
         style={styles.icon}
       />
     </TouchableOpacity>
@@ -121,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListItem;
+export default LikedVerseItem;

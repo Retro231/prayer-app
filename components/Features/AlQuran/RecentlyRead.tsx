@@ -1,40 +1,52 @@
 import { Dimensions, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Colors } from "@/constants/Colors";
+import { fatchRecentlyRead } from "@/scripts/database";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { router } from "expo-router";
+import { getAyahs } from "@/scripts/getQuranData";
 
-const RecentlyRead = () => {
+const RecentlyRead = ({ data }: { data: any }) => {
+  const [info, setInfo] = useState<any>([]);
+  useEffect(() => {
+    (async () => {
+      const info = await getAyahs(data.surahNo);
+      setInfo(info);
+    })();
+  }, [data]);
+  const handlePress = async () => {
+    router.push({
+      pathname: "(QuranStack)/quran_page",
+      params: {
+        id: info.number,
+        name: info.name,
+        englishName: info.englishName,
+        englishNameTranslation: info.englishNameTranslation,
+        numberOfAyahs: info.numberOfAyahs,
+        jump_ayahNo: data.ayahNo,
+      },
+    });
+  };
   return (
     <View
       style={{
         width: Dimensions.get("screen").width,
         margin: 10,
         gap: 5,
+        flexDirection: "row",
       }}
     >
       <Text style={styles.text}>Recently Read:</Text>
-      <View
-        style={{
-          flexDirection: "row",
-          gap: 10,
-        }}
-      >
+      <TouchableOpacity onPress={handlePress}>
         <Text
           style={[
             styles.text,
             { textDecorationLine: "underline", cursor: "pointer" },
           ]}
         >
-          Al-Mu’minun 23:24
+          {data.englishName} - {data.ayahNo}: {info?.numberOfAyahs}
         </Text>
-        <Text
-          style={[
-            styles.text,
-            { textDecorationLine: "underline", cursor: "pointer" },
-          ]}
-        >
-          Al-Mu’minun 23:8
-        </Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

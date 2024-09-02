@@ -66,7 +66,6 @@ const getJuzData = async (juz_number) => {
   const json2 = await response2.json();
 
   const data = [json1.data, json2.data];
-  console.log(json2.data);
   return data;
 };
 

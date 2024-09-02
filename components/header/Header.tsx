@@ -17,7 +17,7 @@ const Header: React.FC<propsType> = ({ title, goBack }) => {
   };
   return (
     <View style={styles.wrapper}>
-      <StatusBar backgroundColor={"black" ?? "blue"} />
+      <StatusBar />
       {/* left section */}
       <View style={styles.left}>
         {goBack ? (

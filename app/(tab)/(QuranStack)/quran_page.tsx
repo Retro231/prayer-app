@@ -1,6 +1,5 @@
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   ListRenderItemInfo,
   ScrollView,
@@ -19,6 +18,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import { Colors } from "@/constants/Colors";
 import ReactNativeModal from "react-native-modal";
+import { useSQLiteContext } from "expo-sqlite";
+import {
+  deleteLikedVerse,
+  fatchLikedVerses,
+  insertLikedVerse,
+  insertRecentlyRead,
+} from "@/scripts/database";
+import Snackbar from "react-native-snackbar";
 // id: item.number,
 // name: item.name,
 // englishName: item.englishName,
@@ -39,7 +46,7 @@ import ReactNativeModal from "react-native-modal";
 // },
 
 const QuranPage: React.FC = () => {
-  const { id, name, englishName, numberOfAyahs, juz_number } =
+  const { id, name, englishName, numberOfAyahs, juz_number, jump_ayahNo } =
     useLocalSearchParams();
   const [audioAyahList, setAudioAyahList] = useState<any>(null);
   const [engAyahList, setEngAyahList] = useState<any>(null);
@@ -50,7 +57,10 @@ const QuranPage: React.FC = () => {
   const [firstPlay, setFirstPlay] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<any>(0);
+  const [likedVersesList, setLikedVerses] = useState<any>([]);
+  const ref = useRef<FlatList>(null);
+  const db = useSQLiteContext();
 
   // all player related --------------------------------------
 
@@ -103,12 +113,27 @@ const QuranPage: React.FC = () => {
 
   // called when currentTrackIndex change
   useEffect(() => {
-    if (currentTrackIndex > -1) {
-      if (firstPlay) {
-        playSound();
+    if (currentTrackIndex < audioAyahList?.length)
+      if (currentTrackIndex > -1) {
+        if (firstPlay) {
+          playSound();
+        }
+        ref.current?.scrollToIndex({
+          index: currentTrackIndex,
+          animated: true,
+          viewPosition: 0,
+        });
       }
-    }
   }, [currentTrackIndex]);
+
+  useEffect(() => {
+    if (jump_ayahNo) {
+      setTimeout(() => {
+        const ayahNo = parseInt(`${jump_ayahNo}`);
+        setCurrentTrackIndex(ayahNo - 1);
+      }, 100);
+    }
+  }, [jump_ayahNo]);
 
   // handle screen unfocused and remove sound from bg
   useFocusEffect(
@@ -125,6 +150,12 @@ const QuranPage: React.FC = () => {
       };
     }, [])
   );
+
+  const handleSingleAyahPress = (item: any) => {
+    setCurrentTrackIndex(item.numberInSurah - 1);
+    const verseInfo = getVerseInfo(item);
+    insertRecentlyRead(verseInfo);
+  };
 
   const handlePlayPause = async () => {
     if (soundRef.current === null) {
@@ -148,12 +179,20 @@ const QuranPage: React.FC = () => {
     setFirstPlay(true);
   };
   const handlePlayerBackword = () => {
-    setCurrentTrackIndex(currentTrackIndex - 1);
-    setFirstPlay(true);
+    // console.log(currentTrackIndex !== 0);
+    if (currentTrackIndex > 0) {
+      setCurrentTrackIndex(currentTrackIndex - 1);
+      setFirstPlay(true);
+    }
   };
   const handlePlayerForword = () => {
-    setCurrentTrackIndex(currentTrackIndex + 1);
-    setFirstPlay(true);
+    if (currentTrackIndex === audioAyahList.length - 1) {
+      setCurrentTrackIndex(0);
+      setFirstPlay(true);
+    } else {
+      setCurrentTrackIndex(currentTrackIndex + 1);
+      setFirstPlay(true);
+    }
   };
 
   // UI controller -------------------------------------
@@ -182,13 +221,95 @@ const QuranPage: React.FC = () => {
     })();
   }, []);
 
-  const renderAyahItem = ({ item, index }: ListRenderItemInfo<any>) => (
-    <MyListItem item={item} index={index} />
-  );
+  // ------------ fetch liked verse from db;
+
+  const getLikedVerse = async () => {
+    const data = await fatchLikedVerses();
+    setLikedVerses(data);
+  };
+
+  useEffect(() => {
+    getLikedVerse();
+  }, []);
+
+  const checkIfExists = (array: any, obj: any) => {
+    let found = false;
+    array.forEach((element: any) => {
+      if (
+        element.surahNo === parseInt(obj.surahNo) &&
+        element.ayahNo === obj.ayahNo
+      ) {
+        found = true;
+      }
+    });
+    return found;
+  };
+
+  const getVerseInfo = (item: any) => {
+    if (!juz_number) {
+      return {
+        name,
+        englishName,
+        surahNo: id,
+        ayahNo: item.numberInSurah,
+      };
+    } else {
+      return {
+        name: item.surah.name,
+        englishName: item.surah.englishName,
+        surahNo: item.surah.number,
+        ayahNo: item.numberInSurah,
+      };
+    }
+  };
+
+  const handleLikedVerse = async (item: any) => {
+    const verseInfo = getVerseInfo(item);
+    db.withTransactionAsync(async () => {
+      await insertLikedVerse(verseInfo);
+      await getLikedVerse();
+    });
+    Snackbar.show({
+      text: "Verse Saved!",
+      duration: Snackbar.LENGTH_SHORT,
+    });
+  };
+
+  const handleRemoveLikedVerse = async (item: any) => {
+    const verseInfo = getVerseInfo(item);
+    db.withTransactionAsync(async () => {
+      await deleteLikedVerse(verseInfo);
+      await getLikedVerse();
+    });
+    Snackbar.show({
+      text: "Verse Removed!",
+      duration: Snackbar.LENGTH_SHORT,
+    });
+  };
+  const renderAyahItem = ({ item, index }: ListRenderItemInfo<any>) => {
+    return <MyListItem item={item} index={index} />;
+  };
+
   const MyListItem = React.memo(
     ({ item, index }: { item: any; index: number }) => {
+      const [isLiked, setIsLiked] = useState(false);
+      React.useEffect(() => {
+        const verseInfo = getVerseInfo(item);
+        const result = checkIfExists(likedVersesList, verseInfo);
+        setIsLiked(result);
+      }, [item]);
       return (
-        <View style={styles.ayahContainer}>
+        <TouchableOpacity
+          style={[
+            styles.ayahContainer,
+            {
+              backgroundColor: `${
+                currentTrackIndex === index ? "#B3F2FF" : "#DAF9FF"
+              }`,
+            },
+          ]}
+          onPress={() => handleSingleAyahPress(item)}
+        >
           <View
             style={{
               borderWidth: 1,
@@ -235,15 +356,32 @@ const QuranPage: React.FC = () => {
                 size={24}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
-              <Ionicons style={styles.ayahIcons} name="bookmark" size={24} />
+            <TouchableOpacity
+              onPress={() => {
+                isLiked ? handleRemoveLikedVerse(item) : handleLikedVerse(item);
+              }}
+            >
+              <Ionicons
+                style={[
+                  styles.ayahIcons,
+                  { color: `${isLiked ? "#ff4848" : "gray"}` },
+                ]}
+                name="heart"
+                size={24}
+                color={"gray"}
+              />
             </TouchableOpacity>
           </View>
-        </View>
+        </TouchableOpacity>
+      );
+    },
+    (prevProps, nextProps) => {
+      // Custom comparison logic here
+      return (
+        prevProps.item === nextProps.item && prevProps.index === nextProps.index
       );
     }
   );
-
   return (
     <SafeAreaView
       style={{
@@ -264,7 +402,9 @@ const QuranPage: React.FC = () => {
       engAyahList !== null &&
       arTafsirList !== null ? (
         <FlatList
+          ref={ref}
           data={audioAyahList}
+          initialNumToRender={audioAyahList.length}
           keyExtractor={(item: any, index: any) => `${index}`}
           renderItem={renderAyahItem}
           ListFooterComponent={
@@ -275,6 +415,20 @@ const QuranPage: React.FC = () => {
               }}
             ></View>
           }
+          onScrollToIndexFailed={({ index }) => {
+            // ref.current?.scrollToOffset({
+            //   offset: currentTrackIndex,
+            //   animated: true,
+            // });
+            const wait = new Promise((resolve) => setTimeout(resolve, 100));
+            wait.then(() => {
+              ref.current?.scrollToIndex({
+                index: currentTrackIndex,
+                animated: true,
+                viewPosition: 0,
+              });
+            });
+          }}
         />
       ) : (
         <Loading />
@@ -283,7 +437,13 @@ const QuranPage: React.FC = () => {
 
       <View style={styles.playerContainer}>
         <Ionicons
-          style={styles.playerBackwordforword}
+          style={[
+            styles.playerBackwordforword,
+            {
+              backgroundColor: `${loading ? "white" : "#b7b7b7"}`,
+            },
+          ]}
+          disabled={!loading && !firstPlay ? true : false}
           size={24}
           name="play-skip-back-outline"
           onPress={handlePlayerBackword}
@@ -316,9 +476,15 @@ const QuranPage: React.FC = () => {
         )}
 
         <Ionicons
-          style={styles.playerBackwordforword}
+          style={[
+            styles.playerBackwordforword,
+            {
+              backgroundColor: `${loading ? "white" : "#b7b7b7"}`,
+            },
+          ]}
           name="play-skip-forward-outline"
           size={24}
+          disabled={!loading && firstPlay ? true : false}
           onPress={handlePlayerForword}
         />
       </View>
@@ -417,12 +583,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   ayahIcons: {
-    color: "#373737",
+    color: "#655f5f",
     padding: 3,
     borderRadius: 15,
     fontSize: 26,
   },
   pageCount: {
+    color: "#655f5f",
     fontFamily: "MontserratSemiBold",
     fontWeight: "semibold",
     fontSize: 16,

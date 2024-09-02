@@ -5,6 +5,7 @@ import { Asset } from "expo-asset";
 import { Suspense, useEffect, useState } from "react";
 import Loading from "@/components/Loading";
 import { View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const loadDatabase = async () => {
   const dbName = "quran.db";
@@ -46,10 +47,12 @@ export default function StackLayout() {
       }
     >
       <SQLiteProvider databaseName="quran.db" useSuspense>
-        <Stack>
-          <Stack.Screen name="al_quran" options={{ headerShown: false }} />
-          <Stack.Screen name="quran_page" options={{ headerShown: false }} />
-        </Stack>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Stack>
+            <Stack.Screen name="al_quran" options={{ headerShown: false }} />
+            <Stack.Screen name="quran_page" options={{ headerShown: false }} />
+          </Stack>
+        </GestureHandlerRootView>
       </SQLiteProvider>
     </Suspense>
   );

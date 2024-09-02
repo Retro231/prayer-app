@@ -1,6 +1,7 @@
 import * as SQLite from "expo-sqlite";
 import { getJuz, getSurahList } from "@/scripts/getQuranData";
 
+// initialize db with tables
 const initializeDB = async () => {
   const db = await SQLite.openDatabaseAsync("quran.db");
   try {
@@ -19,10 +20,26 @@ const initializeDB = async () => {
         isBookmarked INTEGER DEFAULT 0
       );`);
 
-    const rows = await db.getFirstAsync("SELECT COUNT(*) FROM Chapters");
-    console.log("Count:", rows["COUNT(*)"]);
+    await db.execAsync(`CREATE TABLE IF NOT EXISTS LikedVerses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT DEFAULT NULL,
+        englishName TEXT DEFAULT NULL,
+        surahNo INTEGER DEFAULT NULL,
+        ayahNo INTEGER DEFAULT NULL
+      );`);
 
-    if (rows["COUNT(*)"] == 0) {
+    await db.execAsync(`CREATE TABLE IF NOT EXISTS RecentRead (
+        name TEXT DEFAULT NULL,
+        englishName TEXT DEFAULT NULL,
+        surahNo INTEGER DEFAULT NULL,
+        ayahNo INTEGER DEFAULT NULL
+      );`);
+
+    const ChaptersRows = await db.getFirstAsync(
+      "SELECT COUNT(*) FROM Chapters"
+    );
+
+    if (ChaptersRows["COUNT(*)"] == 0) {
       await insertSurah();
       await insertJuz();
     }
@@ -30,6 +47,8 @@ const initializeDB = async () => {
     console.log(error);
   }
 };
+
+// Table: Chapters ----------------------------------------
 
 const insertSurah = async () => {
   try {
@@ -133,7 +152,6 @@ const filterChapters = async () => {
 const filterBookmark = async () => {
   try {
     const db = await SQLite.openDatabaseAsync("quran.db");
-    console.log(db);
     // filter juz
     const allRows = await db.getAllAsync(
       `SELECT *
@@ -169,6 +187,71 @@ const toggleBookmark = async (id) => {
   }
 };
 
+// Table: LikedVerses ----------------------------------------
+
+const insertLikedVerse = async (item) => {
+  const db = await SQLite.openDatabaseAsync("quran.db");
+  await db.runAsync(
+    "INSERT INTO LikedVerses (name,englishName,surahNo,ayahNo) VALUES (?, ?, ?, ?)",
+    item.name,
+    item.englishName,
+    item.surahNo,
+    item.ayahNo
+  );
+};
+
+const deleteLikedVerse = async (item) => {
+  const db = await SQLite.openDatabaseAsync("quran.db");
+  await db.runAsync(
+    "DELETE FROM LikedVerses WHERE surahNo = ? AND ayahNo = ? ",
+    item.surahNo,
+    item.ayahNo
+  );
+};
+
+const fatchLikedVerses = async () => {
+  const db = await SQLite.openDatabaseAsync("quran.db");
+
+  const allRows = await db.getAllAsync(
+    `SELECT *
+    FROM LikedVerses`,
+    1
+  );
+  const likedVerses = allRows.map((item) => {
+    return {
+      ...item,
+    };
+  });
+  return likedVerses;
+};
+
+// Table: RecentRead ----------------------------------------
+const insertRecentlyRead = async (item) => {
+  const db = await SQLite.openDatabaseAsync("quran.db");
+  await db.runAsync("DELETE FROM RecentRead");
+  await db.runAsync(
+    "INSERT INTO RecentRead (name,englishName,surahNo,ayahNo) VALUES (?, ?, ?, ?)",
+    item.name,
+    item.englishName,
+    item.surahNo,
+    item.ayahNo
+  );
+};
+const fatchRecentlyRead = async () => {
+  const db = await SQLite.openDatabaseAsync("quran.db");
+
+  const allRows = await db.getAllAsync(
+    `SELECT *
+    FROM RecentRead`,
+    1
+  );
+  const recentlyRead = allRows.map((item) => {
+    return {
+      ...item,
+    };
+  });
+  return recentlyRead;
+};
 export {
   initializeDB,
   filterChapters,
@@ -176,4 +259,9 @@ export {
   filterJuzList,
   filterBookmark,
   toggleBookmark,
+  insertLikedVerse,
+  deleteLikedVerse,
+  fatchLikedVerses,
+  insertRecentlyRead,
+  fatchRecentlyRead,
 };
