@@ -3,7 +3,7 @@ import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
 import { DrawerToggleButton } from "@react-navigation/drawer";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 const { width, height } = Dimensions.get("screen");
 interface propsType {
   title: String;
@@ -36,11 +36,11 @@ const Header: React.FC<propsType> = ({ title, goBack }) => {
       </View>
       {/* right section*/}
       <View style={styles.right}>
-        <Ionicons
+        {/* <Ionicons
           name={"person-circle-outline"}
           size={32}
           color={Colors.text2}
-        />
+        /> */}
       </View>
     </View>
   );
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
+    fontFamily: "MontserratBold",
     fontWeight: "bold",
     color: Colors.text2,
   },

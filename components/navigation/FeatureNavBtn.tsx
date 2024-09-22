@@ -31,9 +31,9 @@ const FeatureNavBtn: React.FC<propsType> = ({
       activeOpacity={0.9}
       onPress={handlePress}
     >
-      {featureName === "Prayer Timer" ? (
+      {featureName === "Prayer Timer" || featureName === "Halal Restaurant" ? (
         <Ionicons
-          name={"alarm-outline"}
+          name={featureName === "Prayer Timer" ? "alarm-outline" : "fast-food"}
           size={24}
           style={[styles.text, { fontSize: 28 }]}
         />

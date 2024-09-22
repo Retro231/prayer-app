@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const LiveMakkahMadinahScreen = () => {
+const Islamic_iptv = () => {
   return (
     <View>
-      <Text>live_makkah_madinah</Text>
+      <Text>islamic_iptv</Text>
     </View>
   );
 };
 
-export default LiveMakkahMadinahScreen;
+export default Islamic_iptv;
 
 const styles = StyleSheet.create({});

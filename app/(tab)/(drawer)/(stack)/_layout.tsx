@@ -15,10 +15,9 @@ export default function StackLayout() {
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="compass" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="live_makkah_madinah"
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="nearby_mosque" options={{ headerShown: false }} />
+      <Stack.Screen name="halal_restaurant" options={{ headerShown: false }} />
+      <Stack.Screen name="(tasbih)" options={{ headerShown: false }} />
       <Stack.Screen name="more" options={{ headerShown: false }} />
     </Stack>
   );

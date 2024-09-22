@@ -77,21 +77,25 @@ const usePrayerInfo = () => {
           }
         }
 
-        const myTiming: Prayer[] = [
-          { name: "Fajr", time: "01:25" },
-          { name: "Sunrise", time: "01:10" },
-          { name: "Dhuhr", time: "01:20" },
-          { name: "Asr", time: "21:00" },
-          { name: "Sunset", time: "21:30" },
-          { name: "Maghrib", time: "20:48" },
-          { name: "Isha", time: "23:14" },
-          { name: "Imsak", time: "02:40" },
-          { name: "Midnight", time: "01:06" },
-          { name: "Firstthird", time: "23:40" },
-          { name: "Lastthird", time: "02:32" },
-        ];
+        // const myTiming: Prayer[] = [
+        //   { name: "Fajr", time: "01:25" },
+        //   { name: "Sunrise", time: "01:10" },
+        //   { name: "Dhuhr", time: "01:20" },
+        //   { name: "Asr", time: "21:00" },
+        //   { name: "Sunset", time: "21:30" },
+        //   { name: "Maghrib", time: "22:48" },
+        //   { name: "Isha", time: "23:14" },
+        //   { name: "Imsak", time: "02:40" },
+        //   { name: "Midnight", time: "01:06" },
+        //   { name: "Firstthird", time: "23:40" },
+        //   { name: "Lastthird", time: "02:32" },
+        // ];
 
-        timing = [...myTiming];
+        // timing = [...myTiming];
+
+        timing = timing.filter((prayer) =>
+          ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"].includes(prayer.name)
+        );
 
         const upcomingPrayer = getUpcomingPrayer(timing);
 

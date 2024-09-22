@@ -74,28 +74,12 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="media"
+        name="(media)"
         options={{
           title: "Media",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "tv" : "tv-outline"}
-              color={color}
-              style={[
-                styles.tabIcon,
-                { backgroundColor: `${focused ? "#D9D9D9" : "transparent"}` },
-              ]}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "person" : "person-outline"}
               color={color}
               style={[
                 styles.tabIcon,

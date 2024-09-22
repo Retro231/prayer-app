@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { ImageBackground } from "react-native";
 
 // "number": 1,
 // "name": "سُورَةُ ٱلْفَاتِحَةِ",
@@ -35,9 +36,11 @@ const LikedVerseItem: React.FC<ListItemProps> = ({
       style={styles.container}
       onPress={handlePress}
     >
-      <View style={styles.numberContainer}>
-        <Text style={styles.number}>{`${id}`}</Text>
-      </View>
+      <ImageBackground source={require("@/assets/images/frame.png")}>
+        <View style={styles.numberContainer}>
+          <Text style={styles.number}>{`${id}`}</Text>
+        </View>
+      </ImageBackground>
       <View style={styles.titleWrapper}>
         {name && <Text style={styles.title}>{englishName}</Text>}
         {name && <Text style={styles.title}>{name}</Text>}
@@ -70,14 +73,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   numberContainer: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-    borderWidth: 2,
+    width: 40,
+    height: 40,
     borderColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 10,
   },
   number: {
     fontFamily: "MontserratBold",

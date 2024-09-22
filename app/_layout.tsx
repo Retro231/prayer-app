@@ -4,6 +4,8 @@ import { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import Notification, { EventType } from "@notifee/react-native";
 import Loading from "@/components/Loading";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 export default function RootLayout() {
   Notification.onBackgroundEvent(async ({ type, detail }) => {
     const { notification, pressAction } = detail;
@@ -47,12 +49,14 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="(tab)" />
-    </Stack>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="(tab)" />
+      </Stack>
+    </GestureHandlerRootView>
   );
 }

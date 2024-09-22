@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { ImageBackground } from "react-native";
 
 // "number": 1,
 // "name": "سُورَةُ ٱلْفَاتِحَةِ",
@@ -48,11 +49,13 @@ const ListItem: React.FC<ListItemProps> = ({
       style={styles.container}
       onPress={onPress}
     >
-      <View style={styles.numberContainer}>
-        <Text style={styles.number}>{`${
-          juz_number ? juz_number : surah_number
-        }`}</Text>
-      </View>
+      <ImageBackground source={require("@/assets/images/frame.png")}>
+        <View style={styles.numberContainer}>
+          <Text style={styles.number}>{`${
+            juz_number ? juz_number : surah_number
+          }`}</Text>
+        </View>
+      </ImageBackground>
       <View style={styles.titleWrapper}>
         {name && <Text style={styles.title}>{englishName}</Text>}
         {name && <Text style={styles.title}>{name}</Text>}
@@ -88,14 +91,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   numberContainer: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-    borderWidth: 2,
+    width: 40,
+    height: 40,
+    // borderRadius: 50,
+    // borderWidth: 2,
     borderColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 10,
+    // marginRight: 10,
   },
   number: {
     fontFamily: "MontserratBold",

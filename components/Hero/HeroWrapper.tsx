@@ -1,4 +1,11 @@
-import { Dimensions, StyleSheet, Text, View, ViewStyle } from "react-native";
+import {
+  Dimensions,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
 import React, { Component } from "react";
 import { ReactNode } from "react";
 import { Colors } from "@/constants/Colors";

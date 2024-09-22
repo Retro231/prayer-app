@@ -31,9 +31,9 @@ const RecentlyRead = ({ data }: { data: any }) => {
     <View
       style={{
         width: Dimensions.get("screen").width,
-        margin: 10,
         gap: 5,
         flexDirection: "row",
+        marginHorizontal: 16,
       }}
     >
       <Text style={styles.text}>Recently Read:</Text>

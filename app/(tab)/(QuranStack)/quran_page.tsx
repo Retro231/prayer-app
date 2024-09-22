@@ -300,14 +300,7 @@ const QuranPage: React.FC = () => {
       }, [item]);
       return (
         <TouchableOpacity
-          style={[
-            styles.ayahContainer,
-            {
-              backgroundColor: `${
-                currentTrackIndex === index ? "#B3F2FF" : "#DAF9FF"
-              }`,
-            },
-          ]}
+          style={[styles.ayahContainer]}
           onPress={() => handleSingleAyahPress(item)}
         >
           <View
@@ -316,6 +309,9 @@ const QuranPage: React.FC = () => {
               padding: 2,
               borderStyle: "dotted",
               borderRadius: 10,
+              backgroundColor: `${
+                currentTrackIndex === index ? "#01777736" : "#ffff"
+              }`,
             }}
           >
             <Text style={styles.ayahArabic}>{item.text}</Text>
@@ -364,11 +360,11 @@ const QuranPage: React.FC = () => {
               <Ionicons
                 style={[
                   styles.ayahIcons,
-                  { color: `${isLiked ? "#ff4848" : "gray"}` },
+                  { color: `${isLiked ? "#ff4848" : "#017777"}` },
                 ]}
                 name="heart"
                 size={24}
-                color={"gray"}
+                color={"#017777"}
               />
             </TouchableOpacity>
           </View>
@@ -555,7 +551,8 @@ const styles = StyleSheet.create({
   },
   ayahContainer: {
     flex: 1,
-    backgroundColor: "#DAF9FF",
+    // backgroundColor: "#DAF9FF",
+    // backgroundColor: "gray",
     // borderBottomColor: "#000",
     // borderWidth: 1,
     marginHorizontal: 5,
@@ -581,21 +578,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "space-between",
+    backgroundColor: "#01777753",
+    borderRadius: 15,
+    marginTop: 4,
   },
   ayahIcons: {
-    color: "#655f5f",
+    color: "#017777",
     padding: 3,
     borderRadius: 15,
     fontSize: 26,
   },
   pageCount: {
-    color: "#655f5f",
+    color: "#017777",
     fontFamily: "MontserratSemiBold",
     fontWeight: "semibold",
     fontSize: 16,
   },
   modalContainer: {
-    backgroundColor: "#DAF9FF",
+    backgroundColor: "#fff",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 15,
@@ -631,7 +631,7 @@ const styles = StyleSheet.create({
   modalClose: {
     fontFamily: "MontserratSemiBold",
     fontWeight: "semibold",
-    backgroundColor: "#373737",
+    backgroundColor: Colors.darkSea,
     paddingVertical: 4,
     paddingHorizontal: 6,
     borderRadius: 5,

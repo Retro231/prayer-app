@@ -1,4 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import TimerCircle from "@/components/TimerCircle";
 import { Colors } from "@/constants/Colors";
@@ -8,6 +15,7 @@ import Notification, {
   TriggerType,
 } from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import usePrayerInfo from "@/hooks/usePrayerInfo";
 
 interface propsType {
   time: string;
@@ -15,7 +23,16 @@ interface propsType {
 }
 
 const PrayerTimerBox: React.FC<propsType> = ({ time, title }) => {
+  const [active, setActive] = useState(false);
   const [alarm, setAlarm] = useState(false);
+  const { prayerInfo, loading } = usePrayerInfo();
+  const { height, width } = useWindowDimensions();
+
+  useEffect(() => {
+    if (prayerInfo?.upcomingPrayer.name === title) {
+      setActive(true);
+    }
+  }, [loading]);
 
   const isNotificationIdExist = async (): Promise<string | null> => {
     const notificatonId: string | null = await AsyncStorage.getItem(title);
@@ -110,17 +127,33 @@ const PrayerTimerBox: React.FC<propsType> = ({ time, title }) => {
   };
   return (
     <View style={styles.wrapper}>
-      <TimerCircle
-        title={title}
-        time={time}
-        bgStyle={{ backgroundColor: Colors.darkSea, borderColor: "#fff" }}
-        titleStyle={{
-          color: Colors.darkSea,
-          fontWeight: "bold",
-          letterSpacing: 0.5,
+      <View
+        style={{
+          width: "33%",
         }}
-      />
-      <Text style={styles.time}>{time}</Text>
+      >
+        <Text
+          style={{
+            fontSize: 18,
+            fontFamily: "MontserrateSemiBold",
+            fontWeight: "semibold",
+            color: "#ffff",
+          }}
+        >
+          {title}{" "}
+          {active && <Ionicons name="caret-back-sharp" color={"#00ff37"} />}
+        </Text>
+      </View>
+      <Text
+        style={[
+          styles.time,
+          {
+            width: "33%",
+          },
+        ]}
+      >
+        {time}
+      </Text>
       <TouchableOpacity
         onPress={handleAlarm}
         style={{
@@ -132,7 +165,7 @@ const PrayerTimerBox: React.FC<propsType> = ({ time, title }) => {
       >
         <Ionicons
           name={!alarm ? "notifications-off-sharp" : "notifications"}
-          size={32}
+          size={22}
           color={Colors.darkSea}
         />
       </TouchableOpacity>
@@ -144,18 +177,20 @@ export default PrayerTimerBox;
 
 const styles = StyleSheet.create({
   wrapper: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#D1E5E9",
+    backgroundColor: Colors.lightSea,
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 12,
+    width: "100%",
   },
   time: {
-    fontFamily: "MontserratSemiBold",
-    fontWeight: "semibold",
-    fontSize: 24,
-    color: Colors.text1,
+    fontFamily: "MontserratMedium",
+    fontWeight: "medium",
+    fontSize: 22,
+    color: Colors.text2,
   },
 });

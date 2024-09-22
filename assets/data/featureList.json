@@ -19,12 +19,6 @@
       "url": "/prayer_timer"
     },
     {
-      "id": 3,
-      "name": "Live Makkah Madina",
-      "icon": "kaaba",
-      "url": ""
-    },
-    {
       "id": 4,
       "name": "Compass",
       "icon": "compass",
@@ -32,9 +26,27 @@
     },
     {
       "id": 5,
-      "name": "Islamic TV Channels",
+      "name": "Media",
       "icon": "tv",
-      "url": "/media"
+      "url": "(media)/media"
+    },
+    {
+      "id": 6,
+      "name": "Tasbih Counter",
+      "icon": "spinner",
+      "url": "/(tasbih)/tasbih_home"
+    },
+    {
+      "id": 7,
+      "name": "Nearby Mosque",
+      "icon": "mosque",
+      "url": "/nearby_mosque"
+    },
+    {
+      "id": 7,
+      "name": "Halal Restaurant",
+      "icon": "fast-food",
+      "url": "/halal_restaurant"
     }
   ]
 }

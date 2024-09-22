@@ -17,12 +17,16 @@ import {
   FlatList,
   ActivityIndicator,
   StatusBar,
+  Image,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [features, setFeatures] = useState<any[]>([]);
   const { prayerInfo, loading } = usePrayerInfo();
+
+  const { height, width } = useWindowDimensions();
   // **********
   //The padData function ensures that the total number of items is a multiple of the number of columns (numColumns). If the last row is incomplete, it pads the array with dummy items.
   // ***********
@@ -76,42 +80,61 @@ export default function HomeScreen() {
           <View
             style={{
               alignItems: "center",
-              gap: 4,
             }}
           >
-            <Text
+            <View
               style={{
-                fontFamily: "MontserratSemiBold",
-                fontWeight: "semibold",
-                fontSize: 24,
-                color: Colors.text2,
+                alignItems: "center",
+                gap: 2,
               }}
             >
-              Today, 7 July
-            </Text>
-            <Text
-              style={{
-                fontFamily: "MontserratMedium",
-                fontWeight: "medium",
-                fontSize: 14,
-                color: Colors.text2,
-              }}
-            >
-              1 Muharram 1446
-            </Text>
+              <Text
+                style={{
+                  fontFamily: "MontserratSemiBold",
+                  fontWeight: "semibold",
+                  fontSize: 24,
+                  color: Colors.text2,
+                }}
+              >
+                Today, 7 July
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "MontserratMedium",
+                  fontWeight: "medium",
+                  fontSize: 14,
+                  color: Colors.text2,
+                }}
+              >
+                1 Muharram 1446
+              </Text>
+            </View>
+            <MyLocation />
           </View>
-          <MyLocation />
-          <FlatList
-            horizontal={true}
-            data={prayerInfo?.timing}
-            renderItem={({ item }) => (
-              <TimerCircle key={item} title={item.name} time={item.time} />
-            )}
-            keyExtractor={(item, index) => `${index}`}
-            contentContainerStyle={{
-              gap: 10,
+          <View
+            style={{
+              alignItems: "center",
             }}
-          />
+          >
+            <Image source={require("@/assets/images/weather.png")} />
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <FlatList
+              horizontal={true}
+              data={prayerInfo?.timing}
+              renderItem={({ item }) => (
+                <TimerCircle key={item} title={item.name} time={item.time} />
+              )}
+              keyExtractor={(item, index) => `${index}`}
+              contentContainerStyle={{
+                gap: 15,
+              }}
+            />
+          </View>
         </HeroWrapper>
         {/* home content */}
         <View style={styles.mainContentWrapper}>
@@ -155,7 +178,7 @@ export default function HomeScreen() {
                 style={{
                   fontFamily: "MontserratSemiBold",
                   fontWeight: "semibold",
-                  color: Colors.darkSea,
+                  color: Colors.text1,
                   textAlign: "justify",
                 }}
               >
@@ -173,8 +196,8 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   heroWrapper: {
-    alignItems: "center",
-    gap: 16,
+    // alignItems: "center",
+    gap: 1,
     paddingHorizontal: 8,
   },
   mainContentWrapper: {

@@ -4,6 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
+import useMyLocation from "@/hooks/useMyLocation";
 
 interface Address {
   street: string | null;
@@ -14,34 +15,17 @@ interface Address {
 }
 
 const MyLocation = () => {
-  const [address, setAddress] = useState<Address | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.error("Permission to access location was denied");
-        return;
-      }
-      let location = await Location.getCurrentPositionAsync({});
-      let address = await Location.reverseGeocodeAsync({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-      setAddress(address[0]);
-    })();
-  }, []);
+  const { address, errorMsg } = useMyLocation();
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
       <StatusBar backgroundColor="#fff" />
-      <Ionicons name="location" size={24} color={"red"} />
+      <Ionicons name="location" size={24} color={Colors.text2} />
       {errorMsg ? <Text>{errorMsg}</Text> : null}
       {address ? (
         <Text
           style={{
-            color: Colors.green,
+            color: Colors.text2,
             fontWeight: "semibold",
             fontFamily: "MontserratSemiBold",
             fontSize: 14,
@@ -53,7 +37,7 @@ const MyLocation = () => {
       ) : (
         <Text
           style={{
-            color: Colors.green,
+            color: Colors.text2,
             fontWeight: "semibold",
             fontFamily: "MontserratSemiBold",
             fontSize: 14,
