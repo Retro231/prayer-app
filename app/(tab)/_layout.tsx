@@ -5,7 +5,11 @@ import { Colors } from "@/constants/Colors";
 import { StyleSheet } from "react-native";
 import getCurrentLocation from "@/scripts/getCurrentLocation";
 import { useDispatch, useSelector } from "react-redux";
-import { setDefalutLocation, setLocation } from "@/rtk/slices/appSlice";
+import {
+  setDefalutLocation,
+  setIs24HourFormat,
+  setLocation,
+} from "@/rtk/slices/appSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TabLayout() {
@@ -13,6 +17,12 @@ export default function TabLayout() {
   useEffect(() => {
     (async () => {
       const prevStoredLocation = await AsyncStorage.getItem("location");
+      const timeFormetJson = await AsyncStorage.getItem("timeFormet");
+      const timeFormet: {
+        is24Hour: boolean;
+      } = timeFormetJson != null ? JSON.parse(timeFormetJson) : null;
+
+      // location
       if (prevStoredLocation === null) {
         const location = await getCurrentLocation();
         dispatch(setDefalutLocation(`${location?.city},${location?.country}`));
@@ -21,6 +31,11 @@ export default function TabLayout() {
       if (prevStoredLocation !== null) {
         // value previously stored
         dispatch(setLocation(prevStoredLocation));
+      }
+
+      // timeformet
+      if (timeFormet != null) {
+        dispatch(setIs24HourFormat(timeFormet.is24Hour));
       }
     })();
   }, []);

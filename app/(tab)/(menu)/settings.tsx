@@ -18,13 +18,17 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { Button } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/rtk/store";
-import { setDefalutLocation, setLocation } from "@/rtk/slices/appSlice";
+import {
+  setDefalutLocation,
+  setIs24HourFormat,
+  setLocation,
+} from "@/rtk/slices/appSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import getCurrentLocation from "@/scripts/getCurrentLocation";
+
 const Settings = () => {
-  const [is24HourFormat, setIs24HourFormat] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
-  const { location, defaultLocation } = useSelector(
+  const { location, defaultLocation, is24HourFormat } = useSelector(
     (state: RootState) => state.app
   );
   const dispatch = useDispatch();
@@ -32,29 +36,38 @@ const Settings = () => {
   const [isPushNotificationEnabled, setIsPushNotificationEnabled] =
     useState(false);
 
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("location");
+  // const getData = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem("location");
 
-      if (value === null) {
-        dispatch(setLocation(defaultLocation ?? ""));
-      }
-      if (value !== null) {
-        // value previously stored
-        dispatch(setLocation(value));
-      }
-    } catch (e) {
-      // error reading value
-    }
-  };
+  //     if (value === null) {
+  //       dispatch(setLocation(defaultLocation ?? ""));
+  //     }
+  //     if (value !== null) {
+  //       // value previously stored
+  //       dispatch(setLocation(value));
+  //     }
+  //   } catch (e) {
+  //     // error reading value
+  //   }
+  // };
 
   const storeLocation = async (value: string) => {
     try {
       await AsyncStorage.setItem("location", value);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const storeTime24HourFormet = async (value: object) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("timeFormet", jsonValue);
     } catch (e) {
       console.log(e);
     }
@@ -78,8 +91,13 @@ const Settings = () => {
     setLocationModalVisible(!locationModalVisible);
   };
 
-  const toggleHourFormatSwitch = () =>
-    setIs24HourFormat((previousState) => !previousState);
+  const toggleHourFormatSwitch = () => {
+    // setSelected24HourFormat((previousState) => !previousState);
+    dispatch(setIs24HourFormat(!is24HourFormat));
+    storeTime24HourFormet({
+      is24Hour: !is24HourFormat,
+    });
+  };
 
   return (
     <SafeAreaView>
