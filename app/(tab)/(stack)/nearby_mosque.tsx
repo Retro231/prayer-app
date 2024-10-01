@@ -9,17 +9,18 @@ import {
 import React, { useEffect, useState } from "react";
 import Header from "@/components/header/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
-import useMyLocation from "@/hooks/useMyLocation";
 import dataJson from "@/assets/data/data.json";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import Loading from "@/components/Loading";
+import { RootState } from "@/rtk/store";
+import { useSelector } from "react-redux";
 type Props = {};
 
 const NearByMosque = (props: Props) => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const { address, errorMsg } = useMyLocation();
+  const location = useSelector((state: RootState) => state.app.location);
 
   const openGoogleMaps = (placeName: string, address: string | null) => {
     const query = `${placeName} ${address}`;
@@ -66,17 +67,17 @@ const NearByMosque = (props: Props) => {
   // }
 
   useEffect(() => {
-    if (address === null) {
+    if (location === null) {
       setLoading(true);
     }
-    if (address !== null) {
+    if (location !== null) {
       (async () => {
         // await fetchMosques();
         setData(dataJson.results);
         setLoading(false);
       })();
     }
-  }, [address]);
+  }, [location]);
 
   return (
     <SafeAreaView
@@ -134,9 +135,9 @@ const NearByMosque = (props: Props) => {
                   </Text>
                 </View>
               </View>
-              {address !== null && (
+              {location !== null && (
                 <TouchableOpacity
-                  onPress={() => openGoogleMaps(item.name, address?.city)}
+                  onPress={() => openGoogleMaps(item.name, location)}
                 >
                   <FontAwesome5
                     size={18}

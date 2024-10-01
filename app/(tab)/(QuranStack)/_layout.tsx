@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import Loading from "@/components/Loading";
 import { View } from "react-native";
 
+
 const loadDatabase = async () => {
   const dbName = "quran.db";
   const dbAsset = require("./../../../assets/quran.db");

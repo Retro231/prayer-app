@@ -21,14 +21,15 @@ const PrayerTimerScreen = () => {
   const { prayerInfo, loading } = usePrayerInfo();
 
   // Assuming time is in HH:mm format and today's date
-  const targetTime = new Date();
-  const [hours, minutes] = prayerInfo
-    ? prayerInfo?.upcomingPrayer.time.split(":")
-    : ["00", "00"];
-  targetTime.setHours(parseInt(hours, 10));
-  targetTime.setMinutes(parseInt(minutes, 10));
-  targetTime.setSeconds(0);
-  
+
+  const targetTime = prayerInfo ? prayerInfo?.upcomingPrayer.time : "00:00";
+  // const [hours, minutes] = prayerInfo
+  //   ? prayerInfo?.upcomingPrayer.time.split(":")
+  //   : ["00", "00"];
+  // targetTime.setHours(parseInt(hours, 10));
+  // targetTime.setMinutes(parseInt(minutes, 10));
+  // targetTime.setSeconds(0);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header title={"Prayer Timer"} />

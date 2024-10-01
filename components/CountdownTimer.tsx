@@ -22,31 +22,45 @@ const formatTime = (milliseconds: number) => {
     .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 interface CountdownTimerProps {
-  targetTime: Date;
+  targetTime: string;
 }
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetTime }) => {
-  const [timeLeft, setTimeLeft] = useState<number>(
-    calculateTimeDifference(new Date(), targetTime)
-  );
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0 });
+
+  // Parse the 24-hour formatted time (e.g., "16:50")
+  const parse24HourFormat = (time: any) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    const now = new Date();
+    const targetDate = new Date(now);
+    targetDate.setHours(hours, minutes, 0, 0); // Set the target time
+    return targetDate;
+  };
+
+  // Calculate the time difference
+  const calculateTimeLeft = (target: any) => {
+    const now: any = new Date();
+    const difference = target - now; // Difference in milliseconds
+    if (difference > 0) {
+      const hours = Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      setTimeLeft({ hours, minutes });
+    } else {
+      setTimeLeft({ hours: 0, minutes: 0 }); // Timer reached
+    }
+  };
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      const currentTime: any = new Date();
-      const difference = calculateTimeDifference(currentTime, targetTime);
+    const targetDate = parse24HourFormat(targetTime);
+    const timer = setInterval(() => calculateTimeLeft(targetDate), 1000);
 
-      setTimeLeft(difference);
-
-      if (difference <= 0) {
-        clearInterval(intervalId);
-      }
-    }, 1000);
-
-    return () => clearInterval(intervalId);
+    return () => clearInterval(timer); // Clean up on unmount
   }, [targetTime]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.timeText}>{formatTime(timeLeft)}</Text>
+      <Text style={styles.timeText}>
+        {`${timeLeft.hours} hours, ${timeLeft.minutes} minutes`} left
+      </Text>
     </View>
   );
 };
@@ -60,7 +74,7 @@ const styles = StyleSheet.create({
   timeText: {
     fontFamily: "MontserratMedium",
     fontWeight: "medium",
-    fontSize: 24,
+    fontSize: 18,
     color: Colors.text2,
   },
 });

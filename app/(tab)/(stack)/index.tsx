@@ -49,7 +49,7 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    const features = require("../../../../assets/data/featureList.json");
+    const features = require("@/assets/data/featureList.json");
     // console.log(features);
     const data = padData([...features.data], 3);
     setFeatures(data);

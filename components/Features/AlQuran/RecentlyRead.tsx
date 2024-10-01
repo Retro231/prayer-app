@@ -10,7 +10,7 @@ const RecentlyRead = ({ data }: { data: any }) => {
   const [info, setInfo] = useState<any>([]);
   useEffect(() => {
     (async () => {
-      const info = await getAyahs(data.surahNo);
+      const info = await getAyahs(data?.surahNo);
       setInfo(info);
     })();
   }, [data]);
@@ -37,16 +37,20 @@ const RecentlyRead = ({ data }: { data: any }) => {
       }}
     >
       <Text style={styles.text}>Recently Read:</Text>
-      <TouchableOpacity onPress={handlePress}>
-        <Text
-          style={[
-            styles.text,
-            { textDecorationLine: "underline", cursor: "pointer" },
-          ]}
-        >
-          {data.englishName} - {data.ayahNo}: {info?.numberOfAyahs}
-        </Text>
-      </TouchableOpacity>
+      {data ? (
+        <TouchableOpacity onPress={handlePress}>
+          <Text
+            style={[
+              styles.text,
+              { textDecorationLine: "underline", cursor: "pointer" },
+            ]}
+          >
+            {data?.englishName} - {data?.ayahNo}: {info?.numberOfAyahs}
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        ""
+      )}
     </View>
   );
 };

@@ -4,6 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
 import { DrawerToggleButton } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
+import { Button } from "react-native";
 const { width, height } = Dimensions.get("screen");
 interface propsType {
   title: String;
@@ -20,18 +21,15 @@ const Header: React.FC<propsType> = ({ title, goBack }) => {
       <StatusBar />
       {/* left section */}
       <View style={styles.left}>
-        {goBack ? (
+        {goBack && (
           <Ionicons
-            style={{ paddingHorizontal: 15 }}
+            style={{ paddingRight: 15 }}
             name="arrow-back"
             size={24}
             color={Colors.text2}
             onPress={handleGoBack}
           />
-        ) : (
-          <DrawerToggleButton tintColor={Colors.text2} />
         )}
-
         <Text style={styles.title}>{title}</Text>
       </View>
       {/* right section*/}
@@ -64,9 +62,10 @@ const styles = StyleSheet.create({
   left: {
     flexDirection: "row",
     alignItems: "center",
+    marginLeft: 18,
   },
   title: {
-    fontSize: 16,
+    fontSize: 20,
     fontFamily: "MontserratBold",
     fontWeight: "bold",
     color: Colors.text2,

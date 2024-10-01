@@ -240,6 +240,13 @@ const insertRecentlyRead = async (item) => {
 const fatchRecentlyRead = async () => {
   const db = await SQLite.openDatabaseAsync("quran.db");
 
+  await db.execAsync(`CREATE TABLE IF NOT EXISTS RecentRead (
+    name TEXT DEFAULT NULL,
+    englishName TEXT DEFAULT NULL,
+    surahNo INTEGER DEFAULT NULL,
+    ayahNo INTEGER DEFAULT NULL
+  );`);
+
   const allRows = await db.getAllAsync(
     `SELECT *
     FROM RecentRead`,

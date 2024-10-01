@@ -4,7 +4,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "@/constants/Colors";
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
-import useMyLocation from "@/hooks/useMyLocation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/rtk/store";
 
 interface Address {
   street: string | null;
@@ -15,37 +16,23 @@ interface Address {
 }
 
 const MyLocation = () => {
-  const { address, errorMsg } = useMyLocation();
+  // const { address, errorMsg } = useMyLocation();
+  const location = useSelector((state: RootState) => state.app.location);
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
       <StatusBar backgroundColor="#fff" />
       <Ionicons name="location" size={24} color={Colors.text2} />
-      {errorMsg ? <Text>{errorMsg}</Text> : null}
-      {address ? (
-        <Text
-          style={{
-            color: Colors.text2,
-            fontWeight: "semibold",
-            fontFamily: "MontserratSemiBold",
-            fontSize: 14,
-          }}
-        >
-          {" "}
-          {address.city},{address.country}
-        </Text>
-      ) : (
-        <Text
-          style={{
-            color: Colors.text2,
-            fontWeight: "semibold",
-            fontFamily: "MontserratSemiBold",
-            fontSize: 14,
-          }}
-        >
-          Fetching address...
-        </Text>
-      )}
+      <Text
+        style={{
+          color: Colors.text2,
+          fontWeight: "semibold",
+          fontFamily: "MontserratSemiBold",
+          fontSize: 14,
+        }}
+      >
+        {location !== null ? location : "fatching..."}
+      </Text>
     </View>
   );
 };

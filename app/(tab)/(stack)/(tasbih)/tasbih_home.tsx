@@ -12,6 +12,7 @@ import Header from "@/components/header/Header";
 import { Button } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { Colors } from "@/constants/Colors";
 
 interface tasbihListItemType {
   tasbihName: string;
@@ -36,6 +37,7 @@ const TasbihListItem = ({ tasbihName, tasbihLength }: tasbihListItemType) => {
         borderWidth: 1,
         marginVertical: 5,
         borderRadius: 5,
+        backgroundColor: Colors.darkSea,
       }}
       onPress={handlePress}
     >
@@ -45,6 +47,7 @@ const TasbihListItem = ({ tasbihName, tasbihLength }: tasbihListItemType) => {
           fontWeight: "bold",
           fontFamily: "MontserratBold",
           textTransform: "capitalize",
+          color: Colors.text2,
         }}
       >
         {tasbihName}
@@ -55,11 +58,12 @@ const TasbihListItem = ({ tasbihName, tasbihLength }: tasbihListItemType) => {
           fontWeight: "bold",
           fontFamily: "MontserratBold",
           textTransform: "capitalize",
+          color: Colors.text2,
         }}
       >
         {tasbihLength}
       </Text>
-      <FontAwesome name={"trash"} size={24} />
+      <FontAwesome name={"trash"} size={24} color={Colors.text2} />
     </TouchableOpacity>
   );
 };
@@ -100,9 +104,12 @@ const TasbihCounter = () => {
         <TextInput
           style={{
             paddingHorizontal: 10,
+            paddingVertical: 5,
             borderWidth: 1,
             width: "100%",
             margin: 10,
+            borderRadius: 10,
+            borderColor: Colors.darkSea,
           }}
           onChangeText={(text) => setTasbihName(text)}
           value={tasbihName}
@@ -111,16 +118,23 @@ const TasbihCounter = () => {
         <TextInput
           style={{
             paddingHorizontal: 10,
+            paddingVertical: 5,
             borderWidth: 1,
             width: "100%",
             margin: 10,
+            borderRadius: 10,
+            borderColor: Colors.darkSea,
           }}
           onChangeText={(text) => setTasbihLength(text)}
           value={tasbihLength}
           keyboardType="numeric"
           placeholder="0"
         />
-        <Button title="Create New Tasbih" onPress={handleCreateTasbih} />
+        <Button
+          title="Create New Tasbih"
+          onPress={handleCreateTasbih}
+          color={Colors.darkSea}
+        />
         <View
           style={{
             flexDirection: "row",

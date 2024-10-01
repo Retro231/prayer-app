@@ -1,10 +1,29 @@
 import { Tabs } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { StyleSheet } from "react-native";
+import getCurrentLocation from "@/scripts/getCurrentLocation";
+import { useDispatch, useSelector } from "react-redux";
+import { setDefalutLocation, setLocation } from "@/rtk/slices/appSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TabLayout() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    (async () => {
+      const prevStoredLocation = await AsyncStorage.getItem("location");
+      if (prevStoredLocation === null) {
+        const location = await getCurrentLocation();
+        dispatch(setDefalutLocation(`${location?.city},${location?.country}`));
+        dispatch(setLocation(`${location?.city},${location?.country}`));
+      }
+      if (prevStoredLocation !== null) {
+        // value previously stored
+        dispatch(setLocation(prevStoredLocation));
+      }
+    })();
+  }, []);
   return (
     <Tabs
       screenOptions={{
@@ -25,7 +44,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="(drawer)"
+        name="(stack)"
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
@@ -80,6 +99,23 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "tv" : "tv-outline"}
+              color={color}
+              style={[
+                styles.tabIcon,
+                { backgroundColor: `${focused ? "#D9D9D9" : "transparent"}` },
+              ]}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="(menu)"
+        options={{
+          title: "Menu",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "menu" : "menu-outline"}
               color={color}
               style={[
                 styles.tabIcon,
