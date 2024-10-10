@@ -436,7 +436,8 @@ const QuranPage: React.FC = () => {
           style={[
             styles.playerBackwordforword,
             {
-              backgroundColor: `${loading ? "white" : "#b7b7b7"}`,
+              backgroundColor: `${loading ? "white" : "#dfdbdb"}`,
+              color: `${loading ? "gray" : "#817979"}`,
             },
           ]}
           disabled={!loading && !firstPlay ? true : false}
@@ -475,7 +476,8 @@ const QuranPage: React.FC = () => {
           style={[
             styles.playerBackwordforword,
             {
-              backgroundColor: `${loading ? "white" : "#b7b7b7"}`,
+              backgroundColor: `${loading ? "white" : "#dfdbdb"}`,
+              color: `${loading ? "gray" : "#817979"}`,
             },
           ]}
           name="play-skip-forward-outline"

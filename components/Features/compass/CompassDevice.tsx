@@ -1,4 +1,11 @@
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 // import { Magnetometer } from "react-native-sensors";
 // import Geolocation from "@react-native-community/geolocation";
@@ -140,25 +147,52 @@ const CompassDevice: React.FC<propsType> = ({ getInfo }) => {
   };
 
   if (loading) {
-    return <Loading />;
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Loading />
+      </View>
+    );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.compassContainer}>
-        <Image
-          source={require("../../../assets/images/compass.png")} // Add your compass image path here
-          style={[styles.compass]}
-        />
-        <Image
-          source={require("../../../assets/images/kaaba.png")} // Add your compass image path here
-          style={[
-            styles.kaaba,
-            { transform: [{ rotate: `${getRotationDegree()}deg` }] },
-          ]}
-        />
+    <ScrollView
+      style={{
+        flex: 1,
+        backgroundColor: "#fff",
+      }}
+    >
+      <View style={styles.container}>
+        <View style={styles.compassContainer}>
+          <Image
+            source={require("../../../assets/images/compass.png")} // Add your compass image path here
+            style={[styles.compass]}
+          />
+          <Image
+            source={require("../../../assets/images/kaaba.png")} // Add your compass image path here
+            style={[
+              styles.kaaba,
+              { transform: [{ rotate: `${getRotationDegree()}deg` }] },
+            ]}
+          />
+          <Text
+            style={{
+              textAlign: "center",
+              width: "70%",
+              fontSize: 16,
+              color: "#313131",
+            }}
+          >
+            Place mobile device horizontally, on a flat surface.
+          </Text>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -169,7 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FCFF",
+    backgroundColor: "#fff",
   },
   compassContainer: {
     width: Dimensions.get("window").width,

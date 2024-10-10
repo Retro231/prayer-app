@@ -43,6 +43,12 @@ const initializeDB = async () => {
       await insertSurah();
       await insertJuz();
     }
+
+    // tasbih counter db operation
+    await db.execAsync(`CREATE TABLE IF NOT EXISTS Tasbih (
+      name TEXT DEFAULT NULL,
+      count INTEGER DEFAULT NULL
+    );`);
   } catch (error) {
     console.log(error);
   }
@@ -259,6 +265,7 @@ const fatchRecentlyRead = async () => {
   });
   return recentlyRead;
 };
+
 export {
   initializeDB,
   filterChapters,

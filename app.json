@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000"
+      "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
@@ -36,6 +36,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "@config-plugins/react-native-blob-util",
+      "@config-plugins/react-native-pdf",
       "expo-router",
       [
         "expo-location",

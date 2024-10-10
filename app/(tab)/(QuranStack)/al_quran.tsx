@@ -5,6 +5,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, {
@@ -410,12 +411,14 @@ const AlQuranScreen: React.FC = () => {
               );
             })}
           </View>
-          <FontAwesome
-            style={styles.menuItem}
-            name="sort-numeric-asc"
-            size={20}
-            color={Colors.text1}
-          />
+          {/* <TouchableOpacity onPress={() => handleSorting()}>
+            <FontAwesome
+              style={styles.menuItem}
+              name="sort-numeric-asc"
+              size={20}
+              color={Colors.text1}
+            />
+          </TouchableOpacity> */}
         </View>
         {/* items */}
         {!loading && surahList !== null && juzList !== null ? (

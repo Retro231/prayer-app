@@ -14,8 +14,6 @@ import HeroSmallDate from "@/components/Hero/HeroSmallDate";
 import { Colors } from "@/constants/Colors";
 import PrayerTimerBox from "@/components/Features/PrayerTimer/PrayerTimerBox";
 import usePrayerInfo from "@/hooks/usePrayerInfo";
-import MyLocation from "@/components/MyLocation";
-import CountdownTimer from "@/components/CountdownTimer";
 
 const PrayerTimerScreen = () => {
   const { prayerInfo, loading } = usePrayerInfo();
@@ -34,17 +32,18 @@ const PrayerTimerScreen = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <Header title={"Prayer Timer"} />
       {/* hero */}
-      <HeroWrapper style={{ gap: 10 }}>
+      <HeroWrapper style={{ gap: 10, paddingBottom: 20, paddingTop: 20 }}>
         <View style={styles.heroTop}>
           <HeroStatus
             style={{
               alignItems: "flex-start",
-              width: "50%",
+              gap: 1,
+              marginLeft: 1,
             }}
-            title={"Upcoming Prayer"}
+            title={"Next"}
             info={prayerInfo?.upcomingPrayer.name ?? ""}
+            time={prayerInfo?.upcomingPrayer.time ?? ""}
           />
-
           <HeroSmallDate
             style={{
               alignItems: "flex-end",
@@ -52,27 +51,6 @@ const PrayerTimerScreen = () => {
             eng={prayerInfo?.date ?? ""}
             arabic={prayerInfo?.hijri ?? ""}
           />
-        </View>
-        <View style={styles.heroBottom}>
-          <View
-            style={{
-              alignItems: "center",
-            }}
-          >
-            {/* upcomming prayer Time */}
-            <Text
-              style={{
-                fontFamily: "MontserratSemiBold",
-                fontWeight: "semibold",
-                fontSize: 32,
-                color: Colors.text2,
-              }}
-            >
-              {prayerInfo?.upcomingPrayer.time}
-            </Text>
-            <CountdownTimer targetTime={targetTime} />
-          </View>
-          <MyLocation />
         </View>
       </HeroWrapper>
       {/* main content */}
@@ -111,16 +89,9 @@ const PrayerTimerScreen = () => {
 export default PrayerTimerScreen;
 
 const styles = StyleSheet.create({
-  heroWrapper: {
-    // alignItems: "center",
-  },
   heroTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-  },
-  heroBottom: {
-    alignItems: "center",
-    gap: 10,
   },
 });

@@ -37,6 +37,12 @@ const FeatureNavBtn: React.FC<propsType> = ({
           size={24}
           style={[styles.text, { fontSize: 28 }]}
         />
+      ) : featureName === "Media" ? (
+        <Ionicons
+          name={"tv-outline"}
+          size={24}
+          style={[styles.text, { fontSize: 28 }]}
+        />
       ) : (
         <FontAwesome
           name={iconName}

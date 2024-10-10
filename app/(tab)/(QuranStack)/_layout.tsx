@@ -5,31 +5,13 @@ import { Asset } from "expo-asset";
 import { Suspense, useEffect, useState } from "react";
 import Loading from "@/components/Loading";
 import { View } from "react-native";
-
-
-const loadDatabase = async () => {
-  const dbName = "quran.db";
-  const dbAsset = require("./../../../assets/quran.db");
-  const dbUri = Asset.fromModule(dbAsset).uri;
-  const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
-
-  const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-  if (!fileInfo.exists) {
-    await FileSystem.makeDirectoryAsync(
-      `${FileSystem.documentDirectory}SQLite`,
-      {
-        intermediates: true,
-      }
-    );
-    await FileSystem.downloadAsync(dbUri, dbFilePath);
-  }
-};
+import loadDatabase from "@/scripts/loadDatabase";
 
 export default function StackLayout() {
   const [dbLoaded, setDbLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    loadDatabase()
+    loadDatabase("quran.db")
       .then(() => {
         setDbLoaded(true);
       })

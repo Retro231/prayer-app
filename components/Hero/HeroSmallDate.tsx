@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
 import React from "react";
 import { Colors } from "@/constants/Colors";
+import MyLocation from "../MyLocation";
 
 interface propsType {
   eng: String;
@@ -30,6 +31,7 @@ const HeroSmallDate: React.FC<propsType> = ({ eng, arabic, style }) => {
       >
         {arabic}
       </Text>
+      <MyLocation />
     </View>
   );
 };

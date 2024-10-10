@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import Header from "@/components/header/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -33,8 +33,7 @@ const CompassScreen: React.FC = () => {
             width: "100%",
           }}
         >
-          <View style={{ alignItems: "flex-start", gap: 20, width: "50%" }}>
-            <MyLocation />
+          <View style={{ alignItems: "flex-start", gap: 20, width: "30%" }}>
             <HeroStatus
               title={"Your Kibla"}
               info={qiblaCardinalDirection ?? "..."}
@@ -57,7 +56,7 @@ const CompassScreen: React.FC = () => {
               color: Colors.text2,
             }}
           >
-            Qibla Direction: {qiblaDirection.toFixed(2) }°
+            Qibla Direction: {qiblaDirection.toFixed(2)}°
           </Text>
           <Text
             style={{
@@ -71,6 +70,7 @@ const CompassScreen: React.FC = () => {
           </Text>
         </View>
       </HeroWrapper>
+
       <CompassDevice getInfo={getCompassInfo} />
     </SafeAreaView>
   );

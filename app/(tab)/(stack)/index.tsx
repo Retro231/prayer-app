@@ -1,3 +1,4 @@
+import DailyDua from "@/components/Features/Dua/DailyDua";
 import Header from "@/components/header/Header";
 import HeroWrapper from "@/components/Hero/HeroWrapper";
 import Loading from "@/components/Loading";
@@ -8,6 +9,7 @@ import TimerCircle from "@/components/TimerCircle";
 import VirtualizedList from "@/components/VirtualizedList";
 import { Colors } from "@/constants/Colors";
 import usePrayerInfo from "@/hooks/usePrayerInfo";
+import { RootState } from "@/rtk/store";
 import { useEffect, useState } from "react";
 
 import {
@@ -21,11 +23,12 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
 
 export default function HomeScreen() {
   const [features, setFeatures] = useState<any[]>([]);
   const { prayerInfo, loading } = usePrayerInfo();
-
+  const { is24HourFormat } = useSelector((state: RootState) => state.app);
   const { height, width } = useWindowDimensions();
   // **********
   //The padData function ensures that the total number of items is a multiple of the number of columns (numColumns). If the last row is incomplete, it pads the array with dummy items.
@@ -131,7 +134,7 @@ export default function HomeScreen() {
               )}
               keyExtractor={(item, index) => `${index}`}
               contentContainerStyle={{
-                gap: 15,
+                gap: is24HourFormat ? 20 : 8,
               }}
             />
           </View>
@@ -164,30 +167,7 @@ export default function HomeScreen() {
             />
           </View>
           {/* daily dua */}
-          <View style={{ marginBottom: 50 }}>
-            <SectionTitle title={"Daily Dua"} />
-            <View
-              style={{
-                borderWidth: 1,
-                borderColor: Colors.lightSea,
-                padding: 8,
-                borderRadius: 10,
-              }}
-            >
-              <Text
-                style={{
-                  fontFamily: "MontserratSemiBold",
-                  fontWeight: "semibold",
-                  color: Colors.text1,
-                  textAlign: "justify",
-                }}
-              >
-                O Allah, give my soul (nafs) its God-fearing righteousness
-                (taqwa) and purify it, for You are the best to purify it. You
-                are its Protector and its Guardian. ~Muslim
-              </Text>
-            </View>
-          </View>
+          <DailyDua />
         </View>
       </VirtualizedList>
     </SafeAreaView>

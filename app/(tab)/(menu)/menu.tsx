@@ -1,4 +1,5 @@
 import {
+  BackHandler,
   FlatList,
   StyleSheet,
   Text,
@@ -10,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/header/Header";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 
 const menuitems = [
   {
@@ -51,22 +52,28 @@ const menuitems = [
 
 type Props = {};
 
-const handlePress = (title: string) => {
-  switch (title) {
-    case "Settings":
-      router.navigate("settings");
-      break;
-
-    case "Privacy Policy":
-      router.navigate("privacyPolicy");
-      break;
-
-    default:
-      break;
-  }
-};
-
 const Menu = (props: Props) => {
+  const navigate = useNavigation<any>();
+  const handlePress = (title: string) => {
+    switch (title) {
+      case "Settings":
+        router.navigate("settings");
+        break;
+
+      case "Privacy Policy":
+        router.navigate("privacyPolicy");
+        break;
+      case "Exit":
+        BackHandler.exitApp();
+        navigate.reset({
+          index: 0,
+          routes: [{ name: "(stack)" }],
+        });
+        break;
+      default:
+        break;
+    }
+  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header title={"Menu"} />

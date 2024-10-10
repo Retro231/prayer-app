@@ -18,13 +18,14 @@ export default function StackLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="compass" options={{ headerShown: false }} />
+        <Stack.Screen name="prayer_learning" options={{ headerShown: false }} />
         <Stack.Screen name="nearby_mosque" options={{ headerShown: false }} />
         <Stack.Screen
           name="halal_restaurant"
           options={{ headerShown: false }}
         />
         <Stack.Screen name="(tasbih)" options={{ headerShown: false }} />
-        <Stack.Screen name="more" options={{ headerShown: false }} />
+        <Stack.Screen name="dua" options={{ headerShown: false }} />
       </Stack>
     </Provider>
   );

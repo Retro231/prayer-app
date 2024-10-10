@@ -16,17 +16,26 @@ import Notification, {
 } from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import usePrayerInfo from "@/hooks/usePrayerInfo";
+import { RootState } from "@/rtk/store";
+import { useSelector } from "react-redux";
 
 interface propsType {
   time: string;
   title: string;
 }
 
+interface adujstedMinute {
+  Fajr: number;
+  Dhuhr: number;
+  Asr: number;
+  Maghrib: number;
+  Isha: number;
+}
+
 const PrayerTimerBox: React.FC<propsType> = ({ time, title }) => {
   const [active, setActive] = useState(false);
   const [alarm, setAlarm] = useState(false);
   const { prayerInfo, loading } = usePrayerInfo();
-  const { height, width } = useWindowDimensions();
 
   useEffect(() => {
     if (prayerInfo?.upcomingPrayer.name === title) {
@@ -125,6 +134,7 @@ const PrayerTimerBox: React.FC<propsType> = ({ time, title }) => {
     }
     setAlarm((prev) => !prev);
   };
+
   return (
     <View style={styles.wrapper}>
       <View
@@ -152,7 +162,7 @@ const PrayerTimerBox: React.FC<propsType> = ({ time, title }) => {
           },
         ]}
       >
-        {time}
+        {time ?? 0}
       </Text>
       <TouchableOpacity
         onPress={handleAlarm}

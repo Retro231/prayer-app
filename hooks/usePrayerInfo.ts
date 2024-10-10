@@ -118,6 +118,131 @@
 // };
 
 // export default usePrayerInfo;
+// -----------------------
+// import { RootState } from "@/rtk/store";
+// import { useState, useEffect } from "react";
+// import { useSelector } from "react-redux";
+
+// interface UpcomingPrayer {
+//   name: string;
+//   time: string;
+// }
+
+// interface ApiResponse {
+//   timing: any | "";
+//   date: string | "";
+//   hijri: string | "";
+//   upcomingPrayer: UpcomingPrayer;
+// }
+
+// interface Prayer {
+//   name: string;
+//   time: string;
+// }
+
+// interface PrayerWithMinutes extends Prayer {
+//   minutes: number;
+// }
+
+// const usePrayerInfo = () => {
+//   // const [is24HourFormat, setIs24HourFormat] = useState<boolean>(false);
+//   const { is24HourFormat, location, menualCorrections } = useSelector(
+//     (state: RootState) => state.app
+//   );
+//   const [prayerInfo, setPrayerInfo] = useState<ApiResponse | null>(null);
+//   const [error, setError] = useState<string | null>(null);
+//   const [loading, setLoading] = useState<boolean>(true);
+
+//   const url = `http://api.aladhan.com/v1/timingsByAddress?address=${location}`;
+
+//   // Function to convert 24-hour format to 12-hour format
+//   const convertTo12HourFormat = (time: string): string => {
+//     const [hours, minutes] = time.split(":").map(Number);
+//     const period = hours >= 12 ? "PM" : "AM";
+//     const hour12 = hours % 12 || 12; // Convert "0" to "12" for midnight
+//     return `${hour12}:${minutes < 10 ? `0${minutes}` : minutes} ${period}`;
+//   };
+
+//   const formatTime = (time: string): string => {
+//     return is24HourFormat ? time : convertTo12HourFormat(time);
+//   };
+
+//   useEffect(() => {
+//     function getUpcomingPrayer(timings: Prayer[]): {
+//       name: string;
+//       time: string;
+//     } {
+//       const now = new Date();
+//       const currentTime = now.getHours() * 60 + now.getMinutes();
+
+//       const timesInMinutes: PrayerWithMinutes[] = timings.map(
+//         (prayer: Prayer): PrayerWithMinutes => {
+//           const [hours, minutes] = prayer.time.split(":").map(Number);
+//           return { ...prayer, minutes: hours * 60 + minutes };
+//         }
+//       );
+
+//       const upcomingPrayer = timesInMinutes.find(
+//         (prayer) => prayer.minutes > currentTime
+//       );
+
+//       return upcomingPrayer
+//         ? { name: upcomingPrayer.name, time: formatTime(upcomingPrayer.time) }
+//         : { name: timings[0].name, time: formatTime(timings[0].time) };
+//     }
+
+//     const getPrayerInfo = async () => {
+//       try {
+//         const response = await fetch(url);
+//         if (!response.ok) {
+//           throw new Error(`Error: ${response.status}`);
+//         }
+//         const result = await response.json();
+
+//         const data = result.data;
+//         const timingsObj = data.timings;
+//         let timing = [];
+
+//         for (const key in timingsObj) {
+//           if (timingsObj.hasOwnProperty.call(timingsObj, key)) {
+//             timing.push({
+//               name: key,
+//               time: timingsObj[key],
+//             });
+//           }
+//         }
+
+//         timing = timing.filter((prayer) =>
+//           ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"].includes(prayer.name)
+//         );
+
+//         const upcomingPrayer = getUpcomingPrayer(timing);
+
+//         const date = data.date.readable;
+//         const hijri = `${data.date.hijri.day} ${data.date.hijri.month.en}, ${data.date.hijri.year}`;
+//         setPrayerInfo({
+//           timing: timing.map((prayer) => ({
+//             name: prayer.name,
+//             time: formatTime(prayer.time),
+//           })),
+//           date,
+//           hijri,
+//           upcomingPrayer,
+//         });
+//       } catch (error) {
+//         setError("An error occurred while fetching data");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     getPrayerInfo();
+//   }, [is24HourFormat]);
+
+//   return { prayerInfo, error, loading };
+// };
+
+// export default usePrayerInfo;
 
 import { RootState } from "@/rtk/store";
 import { useState, useEffect } from "react";
@@ -145,13 +270,40 @@ interface PrayerWithMinutes extends Prayer {
 }
 
 const usePrayerInfo = () => {
-  // const [is24HourFormat, setIs24HourFormat] = useState<boolean>(false);
-  const { is24HourFormat } = useSelector((state: RootState) => state.app);
+  const {
+    location,
+    defaultLocation,
+    is24HourFormat,
+    prayerTimeConventions,
+    menualCorrections,
+    juristicMethod,
+  } = useSelector((state: RootState) => state.app);
   const [prayerInfo, setPrayerInfo] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const url = "http://api.aladhan.com/v1/timingsByAddress?address=London,UK";
+  const url = `http://api.aladhan.com/v1/timingsByAddress?address=${location}?method=${prayerTimeConventions}?school=${juristicMethod}`;
+
+  // Function to convert time to 24-hour format and apply manual correction
+  const applyCorrection = (time: string, correction: number): string => {
+    const [hours, minutes] = time.split(":").map(Number);
+    let totalMinutes = hours * 60 + minutes + correction;
+
+    // Handle overflow and underflow of minutes (e.g., if totalMinutes < 0 or > 1440)
+    if (totalMinutes < 0) {
+      totalMinutes += 1440; // wrap to previous day
+    } else if (totalMinutes >= 1440) {
+      totalMinutes -= 1440; // wrap to next day
+    }
+
+    const correctedHours = Math.floor(totalMinutes / 60);
+    const correctedMinutes = totalMinutes % 60;
+
+    // Return corrected time in 24-hour format
+    return `${correctedHours < 10 ? `0${correctedHours}` : correctedHours}:${
+      correctedMinutes < 10 ? `0${correctedMinutes}` : correctedMinutes
+    }`;
+  };
 
   // Function to convert 24-hour format to 12-hour format
   const convertTo12HourFormat = (time: string): string => {
@@ -161,6 +313,7 @@ const usePrayerInfo = () => {
     return `${hour12}:${minutes < 10 ? `0${minutes}` : minutes} ${period}`;
   };
 
+  // Function to format the time based on the current format (24 or 12-hour)
   const formatTime = (time: string): string => {
     return is24HourFormat ? time : convertTo12HourFormat(time);
   };
@@ -203,9 +356,14 @@ const usePrayerInfo = () => {
 
         for (const key in timingsObj) {
           if (timingsObj.hasOwnProperty.call(timingsObj, key)) {
+            // Apply manual correction to each prayer time
+            const correctedTime = applyCorrection(
+              timingsObj[key],
+              menualCorrections[key] ?? 0
+            );
             timing.push({
               name: key,
-              time: timingsObj[key],
+              time: correctedTime,
             });
           }
         }
@@ -235,7 +393,7 @@ const usePrayerInfo = () => {
     };
 
     getPrayerInfo();
-  }, [is24HourFormat]);
+  }, [is24HourFormat, menualCorrections]);
 
   return { prayerInfo, error, loading };
 };

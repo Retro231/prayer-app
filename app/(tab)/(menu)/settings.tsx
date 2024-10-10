@@ -21,20 +21,77 @@ import { RootState } from "@/rtk/store";
 import {
   setDefalutLocation,
   setIs24HourFormat,
+  setJuristicMethod,
   setLocation,
 } from "@/rtk/slices/appSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import getCurrentLocation from "@/scripts/getCurrentLocation";
+import { router } from "expo-router";
+import getPrayerTimeConventions from "@/scripts/getPrayerTimeConventions";
+
+const juristicMethodList = [
+  {
+    id: 0,
+    label: "Standard(Shafi, Maliki, Hanbali)",
+  },
+  {
+    id: 1,
+    label: "Hanafi",
+  },
+];
 
 const Settings = () => {
   const [selectedLocation, setSelectedLocation] = useState("");
-  const { location, defaultLocation, is24HourFormat } = useSelector(
-    (state: RootState) => state.app
-  );
+  const {
+    location,
+    defaultLocation,
+    is24HourFormat,
+    prayerTimeConventions,
+    menualCorrections,
+    juristicMethod,
+  } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [isPushNotificationEnabled, setIsPushNotificationEnabled] =
     useState(false);
+  const [prayerTimeConventionList, setPrayerTimeConventionsList] =
+    useState<any>(null);
+  const [juristicMethodName, setJuristicMethodName] = useState<any>(null);
+
+  const [prayerTimeConventionName, setPrayerTimeConventionsName] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      // prayer time conventions
+      const data: any = await getPrayerTimeConventions();
+      setPrayerTimeConventionsList(data);
+      const item = data.find((obj: any) => obj.id === prayerTimeConventions);
+      setPrayerTimeConventionsName(item?.label);
+
+      const foundjuristicMethod = juristicMethodList.find(
+        (obj: any) => obj.id === juristicMethod
+      );
+
+      setJuristicMethodName(foundjuristicMethod?.label);
+    })();
+  }, []);
+
+  useEffect(() => {
+    // prayer time conventions
+    const foundtimeConvention = prayerTimeConventionList?.find(
+      (obj: any) => obj.id === prayerTimeConventions
+    );
+    setPrayerTimeConventionsName(foundtimeConvention?.label);
+  }, [prayerTimeConventions]);
+
+  useEffect(() => {
+    // juristicMethod
+    const foundjuristicMethod = juristicMethodList.find(
+      (obj: any) => obj.id === juristicMethod
+    );
+
+    setJuristicMethodName(foundjuristicMethod?.label);
+  }, [juristicMethod]);
 
   // useEffect(() => {
   //   getData();
@@ -75,8 +132,8 @@ const Settings = () => {
 
   const currentLocation = async () => {
     const location = await getCurrentLocation();
-    dispatch(setDefalutLocation(`${location?.city},${location?.country}`));
-    dispatch(setLocation(`${location?.city},${location?.country}`));
+    dispatch(setDefalutLocation(`${location?.city}, ${location?.country}`));
+    dispatch(setLocation(`${location?.city}, ${location?.country}`));
   };
 
   useEffect(() => {
@@ -102,6 +159,7 @@ const Settings = () => {
   return (
     <SafeAreaView>
       <Header title={"Settings"} goBack />
+
       <View style={styles.container}>
         {/* Notification Toggle */}
         <View style={styles.settingRow}>
@@ -125,6 +183,54 @@ const Settings = () => {
           />
         </View>
 
+        {/*  praye time convention */}
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              router.navigate("prayer_time_conventions");
+            }}
+            style={styles.settingRow}
+          >
+            <View>
+              <Text style={styles.label}>Praye time convention</Text>
+              <Text style={[styles.subLebel]}>{prayerTimeConventionName}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={Colors.darkSea} />
+          </TouchableOpacity>
+        </View>
+
+        {/*  menual corrections */}
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              router.navigate("menual_corrections");
+            }}
+            style={styles.settingRow}
+          >
+            <View>
+              <Text style={styles.label}>Menual Corrections</Text>
+              <Text style={[styles.subLebel]}></Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={Colors.darkSea} />
+          </TouchableOpacity>
+        </View>
+
+        {/*  Juristic Method */}
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              router.navigate("juristic_method");
+            }}
+            style={styles.settingRow}
+          >
+            <View>
+              <Text style={styles.label}>Juristic Method</Text>
+              <Text style={[styles.subLebel]}>{juristicMethodName}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={Colors.darkSea} />
+          </TouchableOpacity>
+        </View>
+
         {/* Change Location (Minimal) */}
         <View style={styles.settingRow}>
           <View
@@ -133,18 +239,19 @@ const Settings = () => {
             }}
           >
             <Text style={[styles.label]}>Location : </Text>
-            <Text style={[styles.label]}>{location}</Text>
+            <Text style={[styles.subLebel]}>{location}</Text>
           </View>
           <TouchableOpacity onPress={handleChangeLocation}>
             <Text style={styles.locationText}>Change</Text>
           </TouchableOpacity>
         </View>
+
+        {/* location change modal */}
         <Modal
           animationType="slide"
           transparent={true}
           visible={locationModalVisible}
           onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
             setLocationModalVisible(!locationModalVisible);
           }}
         >
@@ -297,6 +404,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     color: "#017777",
+  },
+  subLebel: {
+    fontSize: 16,
+    color: "#5e5d5d",
   },
   locationText: {
     fontSize: 18,

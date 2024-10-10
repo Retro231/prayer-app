@@ -9,6 +9,8 @@ import {
   setDefalutLocation,
   setIs24HourFormat,
   setLocation,
+  setMenualCorrections,
+  setPrayerTimeConventions,
 } from "@/rtk/slices/appSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -18,6 +20,12 @@ export default function TabLayout() {
     (async () => {
       const prevStoredLocation = await AsyncStorage.getItem("location");
       const timeFormetJson = await AsyncStorage.getItem("timeFormet");
+      const PrayerTimeConvention = await AsyncStorage.getItem(
+        "PrayerTimeConvention"
+      );
+      const JuristicMethod = await AsyncStorage.getItem("JuristicMethod");
+      const MenualCorrection = await AsyncStorage.getItem("MenualCorrection");
+
       const timeFormet: {
         is24Hour: boolean;
       } = timeFormetJson != null ? JSON.parse(timeFormetJson) : null;
@@ -25,8 +33,8 @@ export default function TabLayout() {
       // location
       if (prevStoredLocation === null) {
         const location = await getCurrentLocation();
-        dispatch(setDefalutLocation(`${location?.city},${location?.country}`));
-        dispatch(setLocation(`${location?.city},${location?.country}`));
+        dispatch(setDefalutLocation(`${location?.city}, ${location?.country}`));
+        dispatch(setLocation(`${location?.city}, ${location?.country}`));
       }
       if (prevStoredLocation !== null) {
         // value previously stored
@@ -37,6 +45,32 @@ export default function TabLayout() {
       if (timeFormet != null) {
         dispatch(setIs24HourFormat(timeFormet.is24Hour));
       }
+
+      // Prayer Time Convention
+      if (PrayerTimeConvention !== null) {
+        dispatch(setPrayerTimeConventions(parseInt(PrayerTimeConvention)));
+      }
+
+      // Prayer Time Convention
+      if (JuristicMethod !== null) {
+        dispatch(setPrayerTimeConventions(parseInt(JuristicMethod)));
+      }
+
+      // menual_corrections
+
+      dispatch(
+        setMenualCorrections(
+          MenualCorrection != null
+            ? JSON.parse(MenualCorrection)
+            : {
+                Fajr: 0,
+                Dhuhr: 0,
+                Asr: 0,
+                Maghrib: 0,
+                Isha: 0,
+              }
+        )
+      );
     })();
   }, []);
   return (

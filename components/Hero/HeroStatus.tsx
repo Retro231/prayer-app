@@ -5,31 +5,38 @@ import { Colors } from "@/constants/Colors";
 interface propsType {
   title: String;
   info: String;
+  time?: String;
   style?: ViewStyle | ViewStyle[];
 }
 
-const HeroStatus: React.FC<propsType> = ({ title, info, style }) => {
+const HeroStatus: React.FC<propsType> = ({ title, info, time, style }) => {
   return (
     <View style={[style]}>
       <Text
         style={{
-          fontFamily: "MontserratSemiBold",
-          fontWeight: "semibold",
           fontSize: 16,
           color: Colors.text2,
+          fontWeight: "300",
         }}
       >
         {title}
       </Text>
       <Text
         style={{
-          fontFamily: "MontserratMedium",
-          fontWeight: "medium",
-          fontSize: 26,
+          fontSize: 24,
           color: Colors.text2,
         }}
       >
         {info}
+      </Text>
+      <Text
+        style={{
+          fontSize: 28,
+          color: Colors.text2,
+          fontWeight: "300",
+        }}
+      >
+        {time}
       </Text>
     </View>
   );

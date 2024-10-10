@@ -9,15 +9,17 @@ import {
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/header/Header";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { StatusBar } from "expo-status-bar";
+import { Ionicons } from "@expo/vector-icons";
 
 const TasbihCounter = () => {
   const [counter, setCounter] = useState<number>(0);
-  const { tasbihName, tasbihLength } = useLocalSearchParams<{
-    tasbihName: string;
-    tasbihLength: string;
+  const { name, count, arabic } = useLocalSearchParams<{
+    name: string;
+    count: string;
+    arabic: string;
   }>();
 
   const reset = () => {
@@ -25,15 +27,20 @@ const TasbihCounter = () => {
   };
 
   useEffect(() => {
-    const tLength = parseInt(tasbihLength ?? "0");
+    const tLength = parseInt(count ?? "0");
     if (counter === tLength) {
       Alert.alert("Congratulation", "You have completed your Tasbih.", [
         {
-          text: "Reset",
-          onPress: () => reset(),
+          text: "Again",
+          onPress: () => {
+            setCounter(0);
+          },
+        },
+        {
+          text: "Exit",
+          onPress: () => router.back(),
           style: "cancel",
         },
-        { text: "Again", onPress: () => console.log("OK Pressed") },
       ]);
     }
   }, [counter]);
@@ -46,35 +53,68 @@ const TasbihCounter = () => {
         style={{
           padding: 10,
           flexDirection: "row",
-          alignItems: "center",
           justifyContent: "space-between",
+          alignItems: "center",
           backgroundColor: "#00000019",
+          width: "100%",
         }}
       >
-        <View>
+        <View
+          style={{
+            width: "70%",
+          }}
+        >
           <Text
             style={{
               fontSize: 18,
             }}
           >
-            Tasbih Name: {tasbihName}
+            {name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 18,
+            }}
+          >
+            {arabic}
           </Text>
           <Text
             style={{
               fontSize: 16,
+              fontWeight: "500",
             }}
           >
-            Total Count: {tasbihLength}
+            Count: {count}
           </Text>
         </View>
-        <View>
-          <Button
-            title="Reset"
+        <View
+          style={{
+            flexDirection: "column",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: 10,
+            gap: 10,
+          }}
+        >
+          <TouchableOpacity
             onPress={() => {
               setCounter(0);
             }}
-            color={"red"}
-          />
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 4,
+              backgroundColor: "red",
+              paddingHorizontal: 8,
+              borderRadius: 4,
+              paddingVertical: 8,
+            }}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="reload" size={15} color={"white"} />
+            <Text style={{ color: "white", fontWeight: "500" }}>Reset</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <View

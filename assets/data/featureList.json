@@ -16,7 +16,7 @@
       "id": 2,
       "name": "Prayer Learning",
       "icon": "pray",
-      "url": "/prayer_timer"
+      "url": "/prayer_learning"
     },
     {
       "id": 4,
@@ -47,6 +47,12 @@
       "name": "Halal Restaurant",
       "icon": "fast-food",
       "url": "/halal_restaurant"
+    },
+    {
+      "id": 8,
+      "name": "Dua",
+      "icon": "praying-hands",
+      "url": "/dua"
     }
   ]
 }
