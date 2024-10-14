@@ -424,9 +424,29 @@
   ],
   "software_update_url": "",
   "notice": "",
-  "media": {
-    "live_makkah_url": "",
-    "live_madinah_url": "",
-    "islamic_iptv_list_url": ""
-  }
+  "media": [
+    {
+      "cateogry": "",
+      "title": "",
+      "image": "",
+      "url": ""
+    }
+  ],
+  "our_post": [
+    {
+      "id": 0,
+      "description": "",
+      "image": ""
+    },
+    {
+      "id": 1,
+      "title": "",
+      "image": ""
+    },
+    {
+      "id": 2,
+      "title": "",
+      "description": ""
+    }
+  ]
 }

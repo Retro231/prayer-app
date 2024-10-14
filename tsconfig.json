@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "scripts/getPrayerInfo.js", "components/Features/Settings/ManualCorrectionModal.tsx"  ]
+, "scripts/getPrayerInfo.js", "components/Features/Settings/ManualCorrectionModal.tsx", "app/(tab)/(stack)/index.tsx"  ]
 }

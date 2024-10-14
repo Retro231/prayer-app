@@ -1,5 +1,5 @@
 import * as SQLite from "expo-sqlite";
-import { getJuz, getSurahList } from "@/scripts/getQuranData";
+import { getAudioAyahs, getJuz, getSurahList } from "@/scripts/getQuranData";
 
 // initialize db with tables
 const initializeDB = async () => {
@@ -20,6 +20,33 @@ const initializeDB = async () => {
         isBookmarked INTEGER DEFAULT 0
       );`);
 
+    // surah / juz
+
+    // id -
+    // type - surah|juz
+    // data -
+    // surahNo-
+    // juzNo -
+
+    await db.execAsync(`CREATE TABLE IF NOT EXISTS ChapterInfo (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT DEFAULT NULL,
+        data TEXT DEFAULT NULL,
+        surahNo INTEGER DEFAULT NULL,
+        juzNo INTEGER DEFAULT NULL
+    );`);
+
+    // tafsir
+    // surahNo: surah-number
+    // data : data
+
+    await db.execAsync(`CREATE TABLE IF NOT EXISTS Tafsir (
+      surahNo INTEGER DEFAULT NULL,
+      data TEXT DEFAULT NULL
+      );`);
+
+    // LikedVerses
+
     await db.execAsync(`CREATE TABLE IF NOT EXISTS LikedVerses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT DEFAULT NULL,
@@ -28,6 +55,7 @@ const initializeDB = async () => {
         ayahNo INTEGER DEFAULT NULL
       );`);
 
+    // RecentRead
     await db.execAsync(`CREATE TABLE IF NOT EXISTS RecentRead (
         name TEXT DEFAULT NULL,
         englishName TEXT DEFAULT NULL,
@@ -35,11 +63,9 @@ const initializeDB = async () => {
         ayahNo INTEGER DEFAULT NULL
       );`);
 
-    const ChaptersRows = await db.getFirstAsync(
-      "SELECT COUNT(*) FROM Chapters"
-    );
+    const tableExit = await isTableExist("Chapters");
 
-    if (ChaptersRows["COUNT(*)"] == 0) {
+    if (tableExit) {
       await insertSurah();
       await insertJuz();
     }
@@ -49,6 +75,28 @@ const initializeDB = async () => {
       name TEXT DEFAULT NULL,
       count INTEGER DEFAULT NULL
     );`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Check if Table Exist...??
+
+const isTableExist = async (tableName) => {
+  try {
+    const db = await SQLite.openDatabaseAsync("quran.db");
+
+    const ChaptersRows = await db.getFirstAsync(
+      `SELECT COUNT(*) FROM ${tableName}`
+    );
+
+    if (ChaptersRows !== null) {
+      if (ChaptersRows["COUNT(*)"] >= 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   } catch (error) {
     console.log(error);
   }
@@ -80,6 +128,7 @@ const insertJuz = async () => {
     const db = await SQLite.openDatabaseAsync("quran.db");
 
     const juzList = await getJuz();
+
     juzList.forEach(async (item) => {
       await db.runAsync(
         "INSERT INTO Chapters (juz_number,juz_verse_mapping,juz_first_verse_id,juz_last_verse_id,juz_verses_count) VALUES (?, ?, ?, ?, ?)",
@@ -266,8 +315,90 @@ const fatchRecentlyRead = async () => {
   return recentlyRead;
 };
 
+// Table: ChapterInfo
+
+const insertChapterInfo = async (type, data, surahNo = null, juzNo = null) => {
+  // console.log(type, data, surahNo, juzNo);
+  // surah / juz
+  // id -
+  // type - surah|juz
+  // data -
+  // surahNo-
+  // juzNo -
+
+  try {
+    const db = await SQLite.openDatabaseAsync("quran.db");
+    await db.runAsync(
+      "INSERT INTO ChapterInfo (type,data,surahNo,juzNo ) VALUES (?, ?, ?, ?)",
+      type,
+      JSON.stringify(data),
+      surahNo,
+      juzNo
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const isSurahInfoExist = async (id) => {
+  try {
+    const db = await SQLite.openDatabaseAsync("quran.db");
+
+    // filter surah list
+    const allRows = await db.getAllAsync(
+      `SELECT *
+      FROM ChapterInfo
+      WHERE surahNo = ?`,
+      id
+    );
+
+    const surahInfo = allRows.map((item) => {
+      return {
+        ...item,
+      };
+    });
+
+    if (surahInfo.length > 0) {
+      return surahInfo[0];
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const isJuzInfoExist = async (id) => {
+  try {
+    const db = await SQLite.openDatabaseAsync("quran.db");
+
+    // filter surah list
+    const allRows = await db.getAllAsync(
+      `SELECT *
+      FROM ChapterInfo
+      WHERE juzNo = ?`,
+      id
+    );
+
+    const juzInfo = allRows.map((item) => {
+      return {
+        ...item,
+      };
+    });
+
+    if (juzInfo.length > 0) {
+      return juzInfo[0];
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export {
   initializeDB,
+  isTableExist,
   filterChapters,
   filterSurahList,
   filterJuzList,
@@ -278,4 +409,7 @@ export {
   fatchLikedVerses,
   insertRecentlyRead,
   fatchRecentlyRead,
+  insertChapterInfo,
+  isSurahInfoExist,
+  isJuzInfoExist,
 };

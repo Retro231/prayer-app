@@ -15,7 +15,13 @@ const initialState: AppStateProps = {
   defaultLocation: null,
   is24HourFormat: true,
   prayerTimeConventions: 0,
-  menualCorrections: null,
+  menualCorrections: {
+    Fajr: 0,
+    Dhuhr: 0,
+    Asr: 0,
+    Maghrib: 0,
+    Isha: 0,
+  },
   juristicMethod: 1,
 };
 

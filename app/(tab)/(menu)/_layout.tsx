@@ -15,6 +15,7 @@ const menuHome = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="privacyPolicy" options={{ headerShown: false }} />
+      <Stack.Screen name="storage" options={{ headerShown: false }} />
       <Stack.Screen name="settings" options={{ headerShown: false }} />
     </Stack>
   );

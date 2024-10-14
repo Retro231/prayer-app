@@ -1,7 +1,6 @@
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "@/constants/Colors";
-import { fatchRecentlyRead } from "@/scripts/database";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { router } from "expo-router";
 import { getAyahs } from "@/scripts/getQuranData";

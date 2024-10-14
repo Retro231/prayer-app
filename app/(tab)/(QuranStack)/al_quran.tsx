@@ -36,7 +36,7 @@ import {
   fatchLikedVerses,
   deleteLikedVerse,
   fatchRecentlyRead,
-} from "@/scripts/database";
+} from "@/scripts/quranDB";
 import LikedVerseItem from "@/components/Features/AlQuran/LikedVerseItem";
 import { getAyahs } from "@/scripts/getQuranData";
 
@@ -454,7 +454,7 @@ const AlQuranScreen: React.FC = () => {
             ""
           )
         ) : (
-          <Loading />
+          ""
         )}
       </View>
     </SafeAreaView>

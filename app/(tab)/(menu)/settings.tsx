@@ -209,7 +209,11 @@ const Settings = () => {
           >
             <View>
               <Text style={styles.label}>Menual Corrections</Text>
-              <Text style={[styles.subLebel]}></Text>
+              <Text style={[styles.subLebel]}>
+                {menualCorrections["Fajr"]},{menualCorrections["Dhuhr"]},
+                {menualCorrections["Asr"]},{menualCorrections["Maghrib"]},
+                {menualCorrections["Isha"]}
+              </Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color={Colors.darkSea} />
           </TouchableOpacity>
@@ -367,6 +371,17 @@ const Settings = () => {
             </View>
           </View>
         </Modal>
+
+        {/* Storage  */}
+        <View>
+          <TouchableOpacity
+            onPress={() => router.navigate("storage")}
+            style={styles.settingRow}
+          >
+            <Text style={styles.label}>Storage</Text>
+            <Ionicons name="chevron-forward" size={24} color={Colors.darkSea} />
+          </TouchableOpacity>
+        </View>
 
         {/* System Settings */}
         <View>

@@ -14,16 +14,6 @@ const Loading = () => {
       }}
     >
       <ActivityIndicator size={24} color={Colors.text1} />
-      {/* <Text
-        style={{
-          fontFamily: "MontserratMedium",
-          fontWeight: "medium",
-          fontSize: 24,
-          color: Colors.text1,
-        }}
-      >
-        Please wait...
-      </Text> */}
     </View>
   );
 };

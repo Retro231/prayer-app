@@ -1,13 +1,17 @@
 import useFonts from "@/hooks/useFonts";
-import { Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import Notification, { EventType } from "@notifee/react-native";
 import Loading from "@/components/Loading";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "@/rtk/store";
+import NetInfo from "@react-native-community/netinfo";
 
 export default function RootLayout() {
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [netOk, setNetOk] = useState<boolean | null>(false);
+
   Notification.onBackgroundEvent(async ({ type, detail }) => {
     try {
       const { notification, pressAction } = detail;
@@ -27,7 +31,20 @@ export default function RootLayout() {
     }
   });
 
-  const [appIsReady, setAppIsReady] = useState(false);
+  useEffect(() => {
+    // Subscribe
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      // console.log("Connection type", state.type);
+      // console.log("Is connected?", state.isConnected);
+      setNetOk(state.isConnected);
+      SplashScreen.hideAsync();
+    });
+
+    // Unsubscribe
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     async function prepare() {
@@ -41,13 +58,8 @@ export default function RootLayout() {
         setAppIsReady(true);
       }
     }
-
     prepare();
   }, []);
-
-  useEffect(() => {
-    (async () => {})();
-  });
 
   if (!appIsReady) {
     return <Loading />;
@@ -61,7 +73,11 @@ export default function RootLayout() {
             headerShown: false,
           }}
         >
-          <Stack.Screen name="(tab)" />
+          {netOk ? (
+            <Stack.Screen name="(tab)" />
+          ) : (
+            <Stack.Screen name="InternetInfo" />
+          )}
         </Stack>
       </GestureHandlerRootView>
     </Provider>

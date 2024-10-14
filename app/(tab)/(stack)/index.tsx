@@ -143,7 +143,7 @@ export default function HomeScreen() {
         <View style={styles.mainContentWrapper}>
           {/* our features */}
           <View style={styles.section}>
-            <SectionTitle title={"Our Features"} />
+            <SectionTitle title={"Features"} />
             <FlatList
               numColumns={3}
               horizontal={false}

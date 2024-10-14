@@ -10,10 +10,10 @@ import {
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Header from "@/components/header/Header";
-import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Loading from "@/components/Loading";
-import { getAudioAyahs, getJuzData, getTafsir } from "@/scripts/getQuranData";
+import { getAudioAyahs, getJuzData } from "@/scripts/getQuranData";
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import { Colors } from "@/constants/Colors";
@@ -22,9 +22,13 @@ import { useSQLiteContext } from "expo-sqlite";
 import {
   deleteLikedVerse,
   fatchLikedVerses,
+  insertChapterInfo,
   insertLikedVerse,
   insertRecentlyRead,
-} from "@/scripts/database";
+  isJuzInfoExist,
+  isSurahInfoExist,
+  isTableExist,
+} from "@/scripts/quranDB";
 import Snackbar from "react-native-snackbar";
 // id: item.number,
 // name: item.name,
@@ -46,13 +50,16 @@ import Snackbar from "react-native-snackbar";
 // },
 
 const QuranPage: React.FC = () => {
-  const { id, name, englishName, numberOfAyahs, juz_number, jump_ayahNo } =
+  const { id, name, englishName, numberOfAyahs, juz_number, jump_ayahNo }: any =
     useLocalSearchParams();
   const [audioAyahList, setAudioAyahList] = useState<any>(null);
   const [engAyahList, setEngAyahList] = useState<any>(null);
-  const [arTafsirList, setArTafsirList] = useState<any>(null);
+  const [arSurahTafsirList, setArSurahTafsirList] = useState<any>(null);
+  const [arJuzTafsirList, setArJuzTafsirList] = useState<any>(null);
   const [tafsirText, setTafsirText] = useState<any>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDownloadModalVisible, setDownloadModalVisible] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const soundRef = useRef<any>(null);
   const [firstPlay, setFirstPlay] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -197,26 +204,43 @@ const QuranPage: React.FC = () => {
 
   // UI controller -------------------------------------
 
-  const handleTafsir = (ayahInSurah?: any) => {
-    setTafsirText(arTafsirList[ayahInSurah].text);
+  const handleTafsir = (ayahNo?: any) => {
+    if (juz_number) {
+      setTafsirText(arJuzTafsirList[ayahNo - 1].text);
+    } else {
+      setTafsirText(arSurahTafsirList[ayahNo - 1].text);
+    }
     setIsModalVisible(true);
   };
 
   // getting data from api -----------------------------------------------
   useEffect(() => {
     (async () => {
-      const arTafsir = await getTafsir(id);
-      setArTafsirList(arTafsir.ayahs);
-
-      if (juz_number) {
-        const juzData = await getJuzData(juz_number);
-
-        setAudioAyahList(juzData[0].ayahs);
-        setEngAyahList(juzData[1].ayahs);
-      } else {
-        const audioAyah = await getAudioAyahs(id);
-        setAudioAyahList(audioAyah[0].ayahs);
-        setEngAyahList(audioAyah[1].ayahs);
+      const tableExit = await isTableExist("ChapterInfo");
+      // while storing to db name each surah and juz uniqe name so that it can easily found.
+      if (tableExit) {
+        // exist
+        if (juz_number) {
+          const juzInfo: any = await isJuzInfoExist(juz_number);
+          if (juzInfo !== null) {
+            const data = JSON.parse(juzInfo.data);
+            setAudioAyahList(data[0].ayahs);
+            setEngAyahList(data[1].ayahs);
+            setArJuzTafsirList(data[2].ayahs);
+          } else {
+            setDownloadModalVisible(true);
+          }
+        } else {
+          const surahInfo: any = await isSurahInfoExist(id);
+          if (surahInfo !== null) {
+            const data = JSON.parse(surahInfo.data);
+            setAudioAyahList(data[0].ayahs);
+            setEngAyahList(data[1].ayahs);
+            setArSurahTafsirList(data[2].ayahs);
+          } else {
+            setDownloadModalVisible(true);
+          }
+        }
       }
     })();
   }, []);
@@ -328,9 +352,7 @@ const QuranPage: React.FC = () => {
                 ? `${item.numberInSurah} : ${numberOfAyahs}`
                 : `${item.number}`}
             </Text>
-            <TouchableOpacity
-              onPress={() => handleTafsir(item.numberInSurah - 1)}
-            >
+            <TouchableOpacity onPress={() => handleTafsir(item.number)}>
               <Ionicons
                 style={styles.ayahIcons}
                 name="document-text"
@@ -394,13 +416,11 @@ const QuranPage: React.FC = () => {
       />
       {/* -----------------single ayah-------------------- */}
 
-      {audioAyahList !== null &&
-      engAyahList !== null &&
-      arTafsirList !== null ? (
+      {audioAyahList !== null && engAyahList !== null ? (
         <FlatList
           ref={ref}
           data={audioAyahList}
-          initialNumToRender={audioAyahList.length}
+          initialNumToRender={parseInt(jump_ayahNo ? jump_ayahNo : 0)}
           keyExtractor={(item: any, index: any) => `${index}`}
           renderItem={renderAyahItem}
           ListFooterComponent={
@@ -499,7 +519,7 @@ const QuranPage: React.FC = () => {
         <View style={styles.modalContainer}>
           <ScrollView>
             <View>
-              <Text style={styles.modalTitle}>Tafsir:</Text>
+              <Text style={styles.modalTitle}>Tafsir: ( تفسير الجلالين )</Text>
               {tafsirText !== null ? (
                 <Text style={styles.modalTafsir}>
                   {tafsirText !== null && tafsirText}
@@ -514,6 +534,127 @@ const QuranPage: React.FC = () => {
               </TouchableOpacity>
             </View>
           </ScrollView>
+        </View>
+      </ReactNativeModal>
+
+      {/* download modal */}
+      <ReactNativeModal
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        isVisible={isDownloadModalVisible}
+      >
+        <View style={styles.modalContainer}>
+          <View
+            style={{
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            {!downloading && (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "90%",
+                  gap: 5,
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 15,
+                  }}
+                >
+                  Press 'continue' to load required data!
+                </Text>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 15,
+                  }}
+                >
+                  Please check internet connection before continue.
+                </Text>
+              </View>
+            )}
+            {downloading && (
+              <View
+                style={{
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <ActivityIndicator size={24} color={Colors.text1} />
+                <Text
+                  style={{
+                    textAlign: "center",
+                  }}
+                >
+                  Loading...
+                </Text>
+              </View>
+            )}
+            <View style={styles.modalCloseContainer}>
+              <TouchableOpacity
+                style={{
+                  width: "50%",
+                  display: downloading ? "none" : "flex",
+                }}
+                onPress={() => {
+                  setDownloadModalVisible(false);
+                  setDownloading(false);
+                  if (router.canGoBack()) {
+                    router.back();
+                  }
+                }}
+              >
+                <Text style={styles.modalClose}>Later</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  display: downloading ? "none" : "flex",
+                  width: "50%",
+                }}
+                onPress={() => {
+                  if (juz_number) {
+                    (async () => {
+                      setDownloading(true);
+                      const juzData = await getJuzData(juz_number);
+                      await insertChapterInfo("juz", juzData, id, juz_number);
+                      setDownloading(false);
+                      setDownloadModalVisible(false);
+                      setAudioAyahList(juzData[0].ayahs);
+                      setEngAyahList(juzData[1].ayahs);
+                      setArJuzTafsirList(juzData[2].ayahs);
+                    })();
+                  } else {
+                    (async () => {
+                      setDownloading(true);
+                      const audioAyah = await getAudioAyahs(id);
+                      await insertChapterInfo(
+                        "surah",
+                        audioAyah,
+                        id,
+                        juz_number
+                      );
+                      setDownloading(false);
+                      setDownloadModalVisible(false);
+
+                      setAudioAyahList(audioAyah[0].ayahs);
+                      setEngAyahList(audioAyah[1].ayahs);
+                      setArSurahTafsirList(audioAyah[2].ayahs);
+                    })();
+                  }
+                }}
+              >
+                <Text style={styles.modalClose}>continue</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </ReactNativeModal>
     </SafeAreaView>
@@ -625,10 +766,10 @@ const styles = StyleSheet.create({
   },
   modalCloseContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    margin: 10,
     marginTop: 0,
-    alignItems: "center",
+    width: "100%",
+    gap: 5,
+    justifyContent: "center",
   },
   modalClose: {
     fontFamily: "MontserratSemiBold",
