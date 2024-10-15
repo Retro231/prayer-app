@@ -6,25 +6,51 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 interface proptypes {
-  imageUri: any;
-  title: string;
-  url: string;
+  imageUri?: any;
+  title?: string;
+  url?: string;
+  category?: string;
 }
-const MediaNavButton: React.FC<proptypes> = ({ imageUri, title, url }) => {
+const MediaNavButton: React.FC<proptypes> = ({
+  imageUri,
+  title,
+  url,
+  category,
+}) => {
   return (
     <TouchableOpacity
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
         backgroundColor: Colors.lightSea,
-        paddingHorizontal: 18,
-        paddingVertical: 10,
-        borderRadius: 15,
+        paddingHorizontal: 8,
+        paddingVertical: 8,
+        borderRadius: 8,
         alignItems: "center",
       }}
       activeOpacity={0.7}
       onPress={() => {
-        router.navigate(url);
+        if (category === "web") {
+          router.push({
+            pathname: "player",
+            params: {
+              imageUri,
+              title,
+              url,
+              category,
+            },
+          });
+        } else {
+          router.push({
+            pathname: "/video_player",
+            params: {
+              imageUri,
+              title,
+              url,
+              category,
+            },
+          });
+        }
       }}
     >
       <View
@@ -35,26 +61,49 @@ const MediaNavButton: React.FC<proptypes> = ({ imageUri, title, url }) => {
           gap: 10,
         }}
       >
-        {imageUri && (
+        {imageUri ? (
           <Image
             style={{
-              borderRadius: 15,
+              borderRadius: 8,
+              width: 50,
+              height: 50,
             }}
             source={imageUri}
-            width={120}
-            height={80}
+            width={50}
+            height={50}
+          />
+        ) : (
+          <Ionicons
+            name={category === "tv" ? "tv" : "globe"}
+            size={24}
+            color={Colors.text2}
           />
         )}
-        <Text
-          style={{
-            fontSize: 16,
-            fontFamily: "MontserratBold",
-            fontWeight: "bold",
-            color: Colors.text2,
-          }}
-        >
-          {title}
-        </Text>
+        <View>
+          {title && (
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                color: Colors.text2,
+              }}
+            >
+              {title}
+            </Text>
+          )}
+          {category && (
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: "600",
+                color: "#ddd",
+                textTransform: "capitalize",
+              }}
+            >
+              {category}
+            </Text>
+          )}
+        </View>
       </View>
       <Ionicons name="arrow-forward-circle" size={32} color={"white"} />
     </TouchableOpacity>

@@ -1,32 +1,56 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import Header from "@/components/header/Header";
 import MediaNavButton from "@/components/Features/Media/MediaNavButton";
+import getCustomData from "@/scripts/getCustomData";
+
+// "id": 0,
+// "cateogry": "tv",
+// "title": "Peace TV",
+// "image": "",
+// "url": "http://82.114.67.178:8081/hls/PeaceTV.m3"
+
+type mediaItemType = {
+  id: string;
+  category?: string;
+  title?: string;
+  image?: string;
+  url?: string;
+};
 
 const Media = () => {
+  const [data, setData] = useState<[] | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { media } = await getCustomData();
+      setData(media);
+    })();
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header title={"Media"} />
 
-      <View style={{ padding: 10, gap: 10 }}>
-        <MediaNavButton
-          imageUri={require("../../../assets/images/islamic_channels.png")}
-          title="Islamic IP Tv Channels"
-          url="/islamic_iptv"
-        />
-        <MediaNavButton
-          imageUri={require("../../../assets/images/livemakkah.png")}
-          title="Live Makkah"
-          url="/live_makkah"
-        />
-        <MediaNavButton
-          imageUri={require("../../../assets/images/livemadina.png")}
-          title="Live Madina"
-          url="/live_madina"
-        />
-      </View>
+      <FlatList
+        data={data}
+        renderItem={({ item }: { item: mediaItemType }) => (
+          <MediaNavButton
+            imageUri={item?.image}
+            title={item?.title}
+            url={item?.url}
+            category={item?.category}
+          />
+        )}
+        keyExtractor={(item, index) => `${index}`}
+        contentContainerStyle={{
+          rowGap: 10,
+          paddingVertical: 10,
+          paddingHorizontal: 10,
+        }}
+      />
     </SafeAreaView>
   );
 };

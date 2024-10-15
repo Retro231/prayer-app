@@ -6,9 +6,7 @@ const mediaHome = () => {
   return (
     <Stack>
       <Stack.Screen name="media" options={{ headerShown: false }} />
-      <Stack.Screen name="live_makkah" options={{ headerShown: false }} />
-      <Stack.Screen name="live_madina" options={{ headerShown: false }} />
-      <Stack.Screen name="islamic_iptv" options={{ headerShown: false }} />
+      <Stack.Screen name="player" options={{ headerShown: false }} />
     </Stack>
   );
 };

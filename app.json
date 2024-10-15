@@ -17,6 +17,7 @@
       "notification": {
         "sound": true
       },
+      "requireFullScreen": true,
       "bundleIdentifier": "com.anonymous.prayerapp"
     },
     "android": {
@@ -39,6 +40,12 @@
       "@config-plugins/react-native-blob-util",
       "@config-plugins/react-native-pdf",
       "expo-router",
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "DEFAULT"
+        }
+      ],
       [
         "expo-location",
         {

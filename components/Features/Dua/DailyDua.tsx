@@ -3,7 +3,7 @@ import { View, Text, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors } from "@/constants/Colors";
 import SectionTitle from "@/components/SectionTitle";
-const customApi = require("@/assets/data/customApi.json");
+import getCustomData from "@/scripts/getCustomData";
 
 type dailyDuaProps = {
   name: string;
@@ -15,7 +15,7 @@ type dailyDuaProps = {
 
 const DailyDua = () => {
   const [dailyDua, setDailyDua] = useState<dailyDuaProps | null>(null); // To store the daily random item
-  const duaList = customApi.dua_list;
+  const [duaList, setDuaList] = useState<any>(null);
   // Function to generate a random item based on the current date
   const getDailyRandomItem = async () => {
     const today = new Date();
@@ -24,10 +24,10 @@ const DailyDua = () => {
     try {
       // Retrieve stored date and item from AsyncStorage
       const storedDate = await AsyncStorage.getItem("selectedDate");
-      const storedItem = await AsyncStorage.getItem("selectedItem");
+      const storedItem: any = await AsyncStorage.getItem("selectedItem");
 
       // If the date has changed or no date was stored, generate a new item
-      if (storedDate !== todayString || !storedItem) {
+      if (storedDate !== todayString || (!storedItem && duaList !== null)) {
         const randomIndex = Math.floor(Math.random() * duaList.length);
         const newItem = duaList[randomIndex];
 
@@ -48,11 +48,15 @@ const DailyDua = () => {
 
   useEffect(() => {
     // Generate or retrieve the daily random item when the component mounts
-    getDailyRandomItem();
+    (async () => {
+      const { dua_list } = await getCustomData();
+      setDuaList(dua_list);
+      dua_list && getDailyRandomItem();
+    })();
   }, []);
 
   return (
-    <View style={{ marginBottom: 50 }}>
+    <View>
       <SectionTitle title={"Daily Dua"} />
       <View
         style={{

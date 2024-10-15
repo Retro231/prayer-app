@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/header/Header";
 import SectionTitle from "@/components/SectionTitle";
 import { Colors } from "@/constants/Colors";
+import getCustomData from "@/scripts/getCustomData";
 
 type Props = {
   name: string;
@@ -72,8 +73,8 @@ const Dua = (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      const data = require("@/assets/data/customApi.json");
-      setData(data);
+      const { dua_list } = await getCustomData();
+      setData(dua_list);
     })();
   }, []);
   return (
@@ -95,7 +96,7 @@ const Dua = (props: Props) => {
         {data !== null ? (
           <FlatList
             style={{ flex: 1 }}
-            data={data.dua_list}
+            data={data}
             renderItem={DuaItem}
             keyExtractor={(item, index) => `${index}`}
           />

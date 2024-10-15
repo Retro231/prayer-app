@@ -422,31 +422,68 @@
       "reference": "Sahih Muslim 2568"
     }
   ],
-  "software_update_url": "",
-  "notice": "",
+  "software_update_url": {
+    "info": "New Update Available!",
+    "url": ""
+  },
+  "notice": "Soon we'll publish new relese!",
   "media": [
     {
-      "cateogry": "",
-      "title": "",
+      "id": 0,
+      "cateogry": "tv",
+      "title": "Peace TV",
       "image": "",
-      "url": ""
+      "url": "http://82.114.67.178:8081/hls/PeaceTV.m3"
+    },
+    {
+      "id": 1,
+      "cateogry": "tv",
+      "title": "Peace TV English",
+      "image": "",
+      "url": "https://dzkyvlfyge.erbvr.com/PeaceTvEnglish/index.m3u8"
+    },
+    {
+      "id": 2,
+      "cateogry": "tv",
+      "title": "Peace TV Bangla",
+      "image": "",
+      "url": "https://dzkyvlfyge.erbvr.com/PeaceTvBangla/index.m3u8"
+    },
+    {
+      "id": 3,
+      "cateogry": "tv",
+      "title": "Peace TV Urdu",
+      "image": "",
+      "url": "https://dzkyvlfyge.erbvr.com/PeaceTvUrdu/index.m3u8"
+    },
+    {
+      "id": 4,
+      "cateogry": "web",
+      "title": "Live Makkah",
+      "image": "",
+      "url": "https://www.youtube.com/embed/8H7JaTorYsw?si=xmhcgbnVIGY4mDTt"
     }
   ],
   "our_post": [
     {
       "id": 0,
-      "description": "",
-      "image": ""
+      "title": "Eid Mubarak!",
+      "description": "May Allah bless you and your family with peace and happiness on this joyous occasion."
     },
     {
       "id": 1,
-      "title": "",
-      "image": ""
+      "title": "Jumu'ah Reminder",
+      "description": "Don’t forget to recite Surah Al-Kahf and send blessings upon the Prophet (PBUH).",
+      "image": "https://static.wixstatic.com/media/7dc500_f78334e240334a05a33f5300a0e36b68~mv2.jpg/v1/fill/w_568,h_510,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/7dc500_f78334e240334a05a33f5300a0e36b68~mv2.jpg"
     },
     {
       "id": 2,
-      "title": "",
-      "description": ""
+      "title": "Importance of Charity",
+      "description": "“The believer’s shade on the Day of Resurrection will be their charity.” - Prophet Muhammad (PBUH)"
+    },
+    {
+      "id": 3,
+      "image": "https://i.ytimg.com/vi/tpJjVCGyFQI/sddefault.jpg?v=66a31a31"
     }
   ]
 }

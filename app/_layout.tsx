@@ -76,7 +76,10 @@ export default function RootLayout() {
           {netOk ? (
             <Stack.Screen name="(tab)" />
           ) : (
-            <Stack.Screen name="InternetInfo" />
+            <Stack>
+              <Stack.Screen name="InternetInfo" />
+              <Stack.Screen name="video_player" />
+            </Stack>
           )}
         </Stack>
       </GestureHandlerRootView>
